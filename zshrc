@@ -111,7 +111,7 @@ export NVM_COMPLETION=true
 export NVM_LAZY_LOAD=true
 
 
-source ${MY_PROFILE}/zsh_plugins.sh
+source ${MY_PROFILE}/zsh_plugins.zsh
 #Reload compinit after configuring plugins
 #autoload -U compinit && compinit
 
@@ -137,3 +137,4 @@ pathmunge "$HOME/bin"
 export VAULT_ADDR=https://vault.devshift.net
 
 pathmunge "$HOME/.poetry/bin"
+export MY_PROFILE

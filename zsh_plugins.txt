@@ -1,0 +1,42 @@
+# comments are supported like this
+#Run `antibody bundle < ${MY_PROFILE}/zsh_plugins.txt > ${MY_PROFILE}/zsh_plugins.zsh` when changing this file
+
+caarlos0/jvm
+djui/alias-tips
+
+caarlos0/zsh-mkc
+
+#Themes are plugins too
+romkatv/powerlevel10k
+
+zsh-users/zsh-completions
+zsh-users/zsh-docker
+zsh-users/zsh-autosuggestions
+#zsh-users/zsh-apple-touchbar #looks cool but need to think about the configuration
+zsh-users/zsh-syntax-highlighting
+zsh-users/zsh-history-substring-search
+
+
+gantsign/zsh-plugins path:ctop
+gantsign/zsh-plugins path:bat
+
+peterhurford/git-it-on.zsh
+hschne/fzf-git
+
+ohmyzsh/ohmyzsh
+ohmyzsh/ohmyzsh path:plugins/git
+ohmyzsh/ohmyzsh path:plugins/keychain
+ohmyzsh/ohmyzsh path:plugins/gpg-agent
+ohmyzsh/ohmyzsh path:plugins/sdk
+ohmyzsh/ohmyzsh path:plugins/aws
+ohmyzsh/ohmyzsh path:plugins/kubectl
+ohmyzsh/ohmyzsh path:plugins/brew
+ohmyzsh/ohmyzsh path:plugins/minikube
+
+mroth/evalcache
+
+/Users/sbarker/.oh-my-zsh/custom/plugins/poetry/ kind:fpath
+
+darvid/zsh-poetry
+matthieusb/zsh-sdkman
+lukechilds/zsh-nvm
