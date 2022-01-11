@@ -3,7 +3,6 @@ typeset -a projects
 
 _hasKey() {
    local var="${1}[$2]"
-   echo "testing ${var}"
    (( ${(P)+${var}} )) && return 0
    return 1
 }
