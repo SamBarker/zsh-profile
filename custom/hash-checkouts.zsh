@@ -8,11 +8,18 @@ _hasKey() {
 }
 
 _buildHash() {
-  local proj=$1
-  if git -C "${HOME}/development/${proj}" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-      # shellcheck disable=SC2140
-      hash -d "${proj}"="${HOME}/development/${proj}"
+  local projects_dir=$1
+  local proj=$2
+  if git -C "${projects_dir}/${proj}" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+      hash -d "${proj}=${projects_dir}/${proj}"
   fi
+}
+
+_findCheckouts() {
+  local search_dir=$1
+  gfind "${search_dir}" -maxdepth 1 -mindepth 1 -type d -printf "%f\0"  \
+     | while IFS= read -r -d '' file; do \
+      _hasKey projects "$file" || _buildHash "${search_dir}" "${file}" ; done
 }
 
 #Include all git projects in the directory hash table
@@ -25,9 +32,10 @@ hashCheckouts() {
       projects+=("$p")
     done <"${cache}"
   fi
-  gfind "${HOME}"/development -maxdepth 1 -mindepth 1 -type d -printf "%f\0"  \
-   | while IFS= read -r -d '' file; do \
-    _hasKey projects "$file" || _buildHash "$file" ; done
+
+  _findCheckouts "${HOME}/development"
+  _findCheckouts "${HOME}/development/strimzi"
+
   #Replace the cache with any updates we have added
   hash -d >"${cache}"
 }
