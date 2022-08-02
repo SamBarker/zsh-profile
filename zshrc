@@ -81,6 +81,9 @@ MY_PROFILE=${HOME}/development/zsh-profile
 ZSH_CUSTOM=${MY_PROFILE}/custom
 source $ZSH/oh-my-zsh.sh
 
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
 # User configuration
 
 export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:/usr/local/man:$MANPATH"
@@ -110,7 +113,6 @@ export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:/usr/local/man:$MANPATH"
 export NVM_COMPLETION=true
 export NVM_LAZY_LOAD=true
 
-
 source ${MY_PROFILE}/zsh_plugins.zsh
 #Reload compinit after configuring plugins
 #autoload -U compinit && compinit
@@ -121,10 +123,6 @@ source ${MY_PROFILE}/zsh_plugins.zsh
 #   autoload -Uz compinit
 #     rm -f ~/.zcompdump; compinit
 # fi
-
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
