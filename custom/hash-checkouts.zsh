@@ -2,9 +2,9 @@
 typeset -a projects
 
 _hasKey() {
-   local var="${1}[$2]"
-   (( ${(P)+${var}} )) && return 0
-   return 1
+  local var="${1}[$2]"
+  (( ${(P)+${var}} )) && return 0
+  return 1
 }
 
 _buildHash() {
@@ -18,7 +18,7 @@ _buildHash() {
 _findCheckouts() {
   local search_dir=$1
   gfind "${search_dir}" -maxdepth 1 -mindepth 1 -type d -printf "%f\0"  \
-     | while IFS= read -r -d '' file; do \
+    | while IFS= read -r -d '' file; do \
       _hasKey projects "$file" || _buildHash "${search_dir}" "${file}" ; done
 }
 
@@ -34,6 +34,7 @@ hashCheckouts() {
   fi
 
   _findCheckouts "${HOME}/development"
+  _findCheckouts "${HOME}/development/internal"
   _findCheckouts "${HOME}/development/strimzi"
 
   #Replace the cache with any updates we have added
