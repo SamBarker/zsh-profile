@@ -36,6 +36,7 @@ hashCheckouts() {
   _findCheckouts "${HOME}/development"
   _findCheckouts "${HOME}/development/internal"
   _findCheckouts "${HOME}/development/strimzi"
+  _findCheckouts "${HOME}/development/kroxy"
 
   #Replace the cache with any updates we have added
   hash -d >"${cache}"
