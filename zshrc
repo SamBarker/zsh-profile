@@ -113,7 +113,7 @@ export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:/usr/local/man:$MANPATH"
 export NVM_COMPLETION=true
 export NVM_LAZY_LOAD=true
 
-source ${MY_PROFILE}/zsh_plugins.zsh
+source ${MY_PROFILE}/zsh_plugins_$(uname).zsh
 #Reload compinit after configuring plugins
 #autoload -U compinit && compinit
 

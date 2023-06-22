@@ -1,5 +1,5 @@
 # comments are supported like this
-#Run `antibody bundle < ${MY_PROFILE}/zsh_plugins.txt > ${MY_PROFILE}/zsh_plugins.zsh` when changing this file
+#Run `antibody bundle < ${MY_PROFILE}/zsh_plugins.txt > ${MY_PROFILE}/zsh_plugins_$(uname).zsh` when changing this file
 
 caarlos0/jvm
 djui/alias-tips
