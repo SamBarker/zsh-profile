@@ -35,8 +35,8 @@ ohmyzsh/ohmyzsh path:plugins/minikube
 
 mroth/evalcache
 
-/Users/sbarker/.oh-my-zsh/custom/plugins/poetry/ kind:fpath
+#/Users/sbarker/.oh-my-zsh/custom/plugins/poetry/ kind:fpath
 
 darvid/zsh-poetry
 matthieusb/zsh-sdkman
-lukechilds/zsh-nvm
+#lukechilds/zsh-nvm
