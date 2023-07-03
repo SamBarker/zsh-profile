@@ -136,4 +136,8 @@ export VAULT_ADDR=https://vault.devshift.net
 
 pathmunge "$HOME/.poetry/bin"
 pathmunge "/usr/local/opt/coreutils/libexec/gnubin"
+
+export QUAY_ORG=sbarker
+export CONTAINER_ENGINE=podman
+
 export MY_PROFILE
