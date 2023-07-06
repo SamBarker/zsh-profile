@@ -85,8 +85,7 @@ source $ZSH/oh-my-zsh.sh
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # User configuration
-
-export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:/usr/local/man:$MANPATH"
+OS=$(uname)
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
@@ -113,7 +112,7 @@ export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:/usr/local/man:$MANPATH"
 export NVM_COMPLETION=true
 export NVM_LAZY_LOAD=true
 
-source ${MY_PROFILE}/zsh_plugins_$(uname).zsh
+source ${MY_PROFILE}/zsh_plugins_${OS}.zsh
 #Reload compinit after configuring plugins
 #autoload -U compinit && compinit
 
@@ -135,5 +134,12 @@ pathmunge "$HOME/bin"
 export VAULT_ADDR=https://vault.devshift.net
 
 pathmunge "$HOME/.poetry/bin"
-pathmunge "/usr/local/opt/coreutils/libexec/gnubin"
+
+
+if [ "$OS" = 'Darwin' ]; then
+  export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:/usr/local/man:$MANPATH"
+  pathmunge "/usr/local/opt/coreutils/libexec/gnubin"
+  source /Users/sbarker/.config/op/plugins.sh
+fi
+
 export MY_PROFILE
