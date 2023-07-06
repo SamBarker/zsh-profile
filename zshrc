@@ -142,4 +142,6 @@ if [ "$OS" = 'Darwin' ]; then
   source /Users/sbarker/.config/op/plugins.sh
 fi
 
+export QUAY_ORG=sbarker
+export CONTAINER_ENGINE=podman
 export MY_PROFILE

@@ -27,7 +27,8 @@ _buildHash() {
 
 _findCheckouts() {
   local search_dir=$1
-  ${FIND} "${search_dir}" -maxdepth 1 -mindepth 1 -type d -printf "%f\0"  \
+
+  [ -d "/path/to/dir" ] && ${FIND} "${search_dir}" -maxdepth 1 -mindepth 1 -type d -printf "%f\0"  \
     | while IFS= read -r -d '' file; do \
       _hasKey projects "$file" || _buildHash "${search_dir}" "${file}" ; done
 }
@@ -44,7 +45,6 @@ hashCheckouts() {
   fi
 
   _findCheckouts "${HOME}/development"
-  _findCheckouts "${HOME}/development/internal"
   _findCheckouts "${HOME}/development/strimzi"
   _findCheckouts "${HOME}/development/kroxy"
 
