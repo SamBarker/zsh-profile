@@ -10,14 +10,11 @@ caarlos0/zsh-mkc
 romkatv/powerlevel10k
 
 zsh-users/zsh-completions
-zsh-users/zsh-docker
 zsh-users/zsh-autosuggestions
 #zsh-users/zsh-apple-touchbar #looks cool but need to think about the configuration
 zsh-users/zsh-syntax-highlighting
 zsh-users/zsh-history-substring-search
 
-
-gantsign/zsh-plugins path:ctop
 gantsign/zsh-plugins path:bat
 
 peterhurford/git-it-on.zsh

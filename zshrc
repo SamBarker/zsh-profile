@@ -112,16 +112,15 @@ OS=$(uname)
 export NVM_COMPLETION=true
 export NVM_LAZY_LOAD=true
 
-source ${MY_PROFILE}/zsh_plugins_${OS}.zsh
-#Reload compinit after configuring plugins
-#autoload -U compinit && compinit
+zsh_plugins=${ZDOTDIR:-${MY_PROFILE}}/zsh_plugins
+if [[ ! ${MY_PROFILE}/zsh_plugins_${OS}.zsh -nt ${zsh_plugins}.txt ]]; then
+  (
+    source /usr/local/opt/antidote/share/antidote/antidote.zsh
+    antidote bundle <${zsh_plugins}.txt >${zsh_plugins}_${OS}.zsh
+  )
+fi
 
-# if type brew &>/dev/null; then
-#   FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
-
-#   autoload -Uz compinit
-#     rm -f ~/.zcompdump; compinit
-# fi
+source ${zsh_plugins}_${OS}.zsh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
