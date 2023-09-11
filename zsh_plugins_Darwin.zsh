@@ -15,8 +15,6 @@ fpath+=( /Users/sbarker/Library/Caches/antidote/https-COLON--SLASH--SLASH-github
 source /Users/sbarker/Library/Caches/antidote/https-COLON--SLASH--SLASH-github.com-SLASH-zsh-users-SLASH-zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh
 fpath+=( /Users/sbarker/Library/Caches/antidote/https-COLON--SLASH--SLASH-github.com-SLASH-zsh-users-SLASH-zsh-history-substring-search )
 source /Users/sbarker/Library/Caches/antidote/https-COLON--SLASH--SLASH-github.com-SLASH-zsh-users-SLASH-zsh-history-substring-search/zsh-history-substring-search.plugin.zsh
-fpath+=( /Users/sbarker/Library/Caches/antidote/https-COLON--SLASH--SLASH-github.com-SLASH-gantsign-SLASH-zsh-plugins/bat )
-source /Users/sbarker/Library/Caches/antidote/https-COLON--SLASH--SLASH-github.com-SLASH-gantsign-SLASH-zsh-plugins/bat/bat.plugin.zsh
 fpath+=( /Users/sbarker/Library/Caches/antidote/https-COLON--SLASH--SLASH-github.com-SLASH-peterhurford-SLASH-git-it-on.zsh )
 source /Users/sbarker/Library/Caches/antidote/https-COLON--SLASH--SLASH-github.com-SLASH-peterhurford-SLASH-git-it-on.zsh/git-it-on.plugin.zsh
 fpath+=( /Users/sbarker/Library/Caches/antidote/https-COLON--SLASH--SLASH-github.com-SLASH-hschne-SLASH-fzf-git )
@@ -39,6 +37,8 @@ fpath+=( /Users/sbarker/Library/Caches/antidote/https-COLON--SLASH--SLASH-github
 source /Users/sbarker/Library/Caches/antidote/https-COLON--SLASH--SLASH-github.com-SLASH-ohmyzsh-SLASH-ohmyzsh/plugins/brew/brew.plugin.zsh
 fpath+=( /Users/sbarker/Library/Caches/antidote/https-COLON--SLASH--SLASH-github.com-SLASH-ohmyzsh-SLASH-ohmyzsh/plugins/minikube )
 source /Users/sbarker/Library/Caches/antidote/https-COLON--SLASH--SLASH-github.com-SLASH-ohmyzsh-SLASH-ohmyzsh/plugins/minikube/minikube.plugin.zsh
+fpath+=( /Users/sbarker/Library/Caches/antidote/https-COLON--SLASH--SLASH-github.com-SLASH-ohmyzsh-SLASH-ohmyzsh/plugins/pyenv )
+source /Users/sbarker/Library/Caches/antidote/https-COLON--SLASH--SLASH-github.com-SLASH-ohmyzsh-SLASH-ohmyzsh/plugins/pyenv/pyenv.plugin.zsh
 fpath+=( /Users/sbarker/Library/Caches/antidote/https-COLON--SLASH--SLASH-github.com-SLASH-mroth-SLASH-evalcache )
 source /Users/sbarker/Library/Caches/antidote/https-COLON--SLASH--SLASH-github.com-SLASH-mroth-SLASH-evalcache/evalcache.plugin.zsh
 fpath+=( /Users/sbarker/Library/Caches/antidote/https-COLON--SLASH--SLASH-github.com-SLASH-darvid-SLASH-zsh-poetry )

@@ -1,5 +1,5 @@
 # comments are supported like this
-#Run `antibody bundle < ${MY_PROFILE}/zsh_plugins.txt > ${MY_PROFILE}/zsh_plugins_$(uname).zsh` when changing this file
+#Run `source /usr/local/opt/antidote/share/antidote/antidote.zsh && antidote bundle <${MY_PROFILE}/zsh_plugins.txt >${MY_PROFILE}/zsh_plugins_$(uname).zsh` when changing this file
 
 caarlos0/jvm
 djui/alias-tips
@@ -15,7 +15,7 @@ zsh-users/zsh-autosuggestions
 zsh-users/zsh-syntax-highlighting
 zsh-users/zsh-history-substring-search
 
-gantsign/zsh-plugins path:bat
+# gantsign/zsh-plugins path:bat
 
 peterhurford/git-it-on.zsh
 hschne/fzf-git
@@ -29,6 +29,7 @@ ohmyzsh/ohmyzsh path:plugins/aws
 ohmyzsh/ohmyzsh path:plugins/kubectl
 ohmyzsh/ohmyzsh path:plugins/brew
 ohmyzsh/ohmyzsh path:plugins/minikube
+ohmyzsh/ohmyzsh path:plugins/pyenv
 
 mroth/evalcache
 
