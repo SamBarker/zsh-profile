@@ -146,5 +146,7 @@ if [ "$OS" = 'Darwin' ]; then
 fi
 
 export QUAY_ORG=sbarker
+export DOCKER_ORG=${QUAY_ORG}
+export DOCKER_REGISTRY=quay.io
 export CONTAINER_ENGINE=podman
 export MY_PROFILE
