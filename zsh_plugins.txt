@@ -27,6 +27,9 @@ ohmyzsh/ohmyzsh path:plugins/gpg-agent
 ohmyzsh/ohmyzsh path:plugins/sdk
 ohmyzsh/ohmyzsh path:plugins/aws
 ohmyzsh/ohmyzsh path:plugins/kubectl
+ohmyzsh/ohmyzsh path:plugins/oc
+ohmyzsh/ohmyzsh path:plugins/podman
+
 ohmyzsh/ohmyzsh path:plugins/brew
 ohmyzsh/ohmyzsh path:plugins/minikube
 ohmyzsh/ohmyzsh path:plugins/pyenv
