@@ -44,9 +44,10 @@ hashCheckouts() {
     done <"${cache}"
   fi
 
-  _findCheckouts "${HOME}/development"
-  _findCheckouts "${HOME}/development/strimzi"
-  _findCheckouts "${HOME}/development/kroxy"
+  _findCheckouts "${HOME}/src"
+  _findCheckouts "${HOME}/src/strimzi"
+  _findCheckouts "${HOME}/src/kroxy"
+  _findCheckouts "${HOME}/src/flink"
 
   #Replace the cache with any updates we have added
   hash -d >"${cache}"
