@@ -77,7 +77,7 @@ HIST_STAMPS="dd/mm/yyyy"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 # plugins=(git keychain gpg-agent)
-MY_PROFILE=${HOME}/development/zsh-profile
+MY_PROFILE=${HOME}/src/zsh-profile
 ZSH_CUSTOM=${MY_PROFILE}/custom
 source $ZSH/oh-my-zsh.sh
 
@@ -150,6 +150,7 @@ export DOCKER_ORG=${QUAY_ORG}
 export DOCKER_REGISTRY=quay.io
 export CONTAINER_ENGINE=podman
 export MY_PROFILE
+export REGISTRY_DESTINATION=quay.io/${QUAY_ORG}/kroxylicious
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
