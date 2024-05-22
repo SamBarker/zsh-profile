@@ -4,6 +4,6 @@ alias bundleUpdate='antibody bundle < ${MY_PROFILE:-$HOME}/zsh_plugins.txt > ${M
 alias gls='gls --hyperlink=auto --color=tty'
 alias mci='mvn clean install'
 alias mcb='mvn clean install -DskipITs=true'
-alias updateFork='BRANCH_NAME=${$(git symbolic-ref -q HEAD)##refs/heads/}; gco main && grhh && gf upstream && grb upstream/main && gpf! && gco ${BRANCH_NAME}' #checkout main which tracks origin/main make sure its reset. Fetch & rebase to the latest upstream/main and push that up to my fork
+alias updateFork='MAIN_BRANCH=$(git_main_branch) BRANCH_NAME=${$(git symbolic-ref -q HEAD)##refs/heads/}; gco ${MAIN_BRANCH} && grhh && gf upstream && grb upstream/${MAIN_BRANCH} && gpf! origin && gco ${BRANCH_NAME}' #checkout main which tracks origin/main make sure its reset. Fetch & rebase to the latest upstream/main and push that up to my fork
 
-source "${HOME}/.config/op/plugins.sh"
+[ -f ${HOME}/.config/op/plugins.sh ] && source "${HOME}/.config/op/plugins.sh"
