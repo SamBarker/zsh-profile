@@ -137,7 +137,7 @@ pathmunge "$HOME/bin"
 export VAULT_ADDR=https://vault.devshift.net
 
 pathmunge "$HOME/.poetry/bin"
-
+pathmunge "$HOME/go/bin"
 
 if [ "$OS" = 'Darwin' ]; then
   export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:/usr/local/man:$MANPATH"
