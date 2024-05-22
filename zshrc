@@ -113,7 +113,7 @@ export NVM_COMPLETION=true
 export NVM_LAZY_LOAD=true
 
 export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+command -v pyenv >/dev/null || export pathmunge $PYENV_ROOT/bin
 eval "$(pyenv init -)"
 
 zsh_plugins=${ZDOTDIR:-${MY_PROFILE}}/zsh_plugins
