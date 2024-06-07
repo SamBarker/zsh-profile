@@ -140,9 +140,14 @@ pathmunge "$HOME/.poetry/bin"
 pathmunge "$HOME/go/bin"
 
 if [ "$OS" = 'Darwin' ]; then
-  export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:/usr/local/man:$MANPATH"
+  envvarvmunge MANPATH /usr/local/opt/coreutils/libexec/gnuman
+  envvarvmunge MANPATH /usr/local/man 
   pathmunge "/usr/local/opt/coreutils/libexec/gnubin"
   source /Users/sbarker/.config/op/plugins.sh
+  set -x
+  envvarvmunge LD_LIBRARY_PATH /opt/async-profiler/async-profiler-3.0-macos/lib/libasyncProfiler.dylib
+  set +x
+  export LD_LIBRARY_PATH
 fi
 
 export QUAY_ORG=sbarker
