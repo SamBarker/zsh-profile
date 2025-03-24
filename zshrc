@@ -112,9 +112,11 @@ OS=$(uname)
 export NVM_COMPLETION=true
 export NVM_LAZY_LOAD=true
 
-[ -f "${HOME}/.pyenv" ] && export PYENV_ROOT="${HOME}/.pyenv"
-command -v pyenv >/dev/null || pathmunge $PYENV_ROOT/bin
-eval "$(pyenv init -)"
+if [ -f "${HOME}/.pyenv" ]; then
+ export PYENV_ROOT="${HOME}/.pyenv"
+ command -v pyenv >/dev/null || pathmunge $PYENV_ROOT/bin
+ eval "$(pyenv init -)"
+fi
 
 zsh_plugins=${ZDOTDIR:-${MY_PROFILE}}/zsh_plugins
 if [[ ! ${MY_PROFILE}/zsh_plugins_${OS}.zsh -nt ${zsh_plugins}.txt ]]; then
@@ -128,6 +130,18 @@ source ${zsh_plugins}_${OS}.zsh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+if [ "$OS" = 'Darwin' ]; then
+  envvarvmunge MANPATH ${HOMEBREW_PREFIX}/opt/coreutils/libexec/gnuman
+  envvarvmunge MANPATH /usr/local/man
+
+  pathmunge "${HOMEBREW_PREFIX}/opt/coreutils/libexec/gnubin"
+  [[ -s "${HOME}/.config/op/plugins.sh" ]] && source "${HOME}/.config/op/plugins.sh"
+  set -x
+  envvarvmunge LD_LIBRARY_PATH /opt/async-profiler/async-profiler-3.0-macos/lib/libasyncProfiler.dylib
+  set +x
+  export LD_LIBRARY_PATH
+fi
+
 hashCheckouts
 
 pathmunge "$HOME/.cargo/bin"
@@ -138,17 +152,6 @@ export VAULT_ADDR=https://vault.devshift.net
 
 pathmunge "$HOME/.poetry/bin"
 pathmunge "$HOME/go/bin"
-
-if [ "$OS" = 'Darwin' ]; then
-  envvarvmunge MANPATH /usr/local/opt/coreutils/libexec/gnuman
-  envvarvmunge MANPATH /usr/local/man 
-  pathmunge "/usr/local/opt/coreutils/libexec/gnubin"
-  source /Users/sbarker/.config/op/plugins.sh
-  set -x
-  envvarvmunge LD_LIBRARY_PATH /opt/async-profiler/async-profiler-3.0-macos/lib/libasyncProfiler.dylib
-  set +x
-  export LD_LIBRARY_PATH
-fi
 
 export QUAY_ORG=sbarker
 export DOCKER_ORG=${QUAY_ORG}

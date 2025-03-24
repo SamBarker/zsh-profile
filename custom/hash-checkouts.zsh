@@ -5,7 +5,7 @@ OS=$(uname)
 
 if [ "$OS" = 'Darwin' ]; then
   # for MacOS
-  FIND=$(which gfind)
+  FIND=$(command -v gfind)
 else
   # for Linux and Windows
   FIND=$(which find)
@@ -47,6 +47,7 @@ hashCheckouts() {
   _findCheckouts "${HOME}/src"
   _findCheckouts "${HOME}/src/strimzi"
   _findCheckouts "${HOME}/src/kroxy"
+  _findCheckouts "${HOME}/src/kroxylicious"
   _findCheckouts "${HOME}/src/flink"
 
   #Replace the cache with any updates we have added
