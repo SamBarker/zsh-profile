@@ -121,7 +121,7 @@ fi
 zsh_plugins=${ZDOTDIR:-${MY_PROFILE}}/zsh_plugins
 if [[ ! ${MY_PROFILE}/zsh_plugins_${OS}.zsh -nt ${zsh_plugins}.txt ]]; then
   (
-    source /usr/local/opt/antidote/share/antidote/antidote.zsh
+    source $(brew --prefix)/opt/antidote/share/antidote/antidote.zsh
     antidote bundle <${zsh_plugins}.txt >${zsh_plugins}_${OS}.zsh
   )
 fi
@@ -131,10 +131,10 @@ source ${zsh_plugins}_${OS}.zsh
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 if [ "$OS" = 'Darwin' ]; then
-  envvarvmunge MANPATH ${HOMEBREW_PREFIX}/opt/coreutils/libexec/gnuman
+  envvarvmunge MANPATH $(brew --prefix)/opt/coreutils/libexec/gnuman
   envvarvmunge MANPATH /usr/local/man
 
-  pathmunge "${HOMEBREW_PREFIX}/opt/coreutils/libexec/gnubin"
+  pathmunge "$(brew --prefix)/opt/coreutils/libexec/gnubin"
   [[ -s "${HOME}/.config/op/plugins.sh" ]] && source "${HOME}/.config/op/plugins.sh"
   set -x
   envvarvmunge LD_LIBRARY_PATH /opt/async-profiler/async-profiler-3.0-macos/lib/libasyncProfiler.dylib
