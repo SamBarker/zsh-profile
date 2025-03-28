@@ -13,17 +13,18 @@ _var_expand() {
 
 # From Centos / RHEL at https://pagure.io/setup/blob/master/f/profile
 envvarvmunge () {
-    envvarname=${1}
+    env_var_name=${1}
     local candidate=${2}
-    local envvar=$(_var_expand "${envvarname}")
-    case ":${envvar}:" in
+    local env_var
+    env_var=$(_var_expand "${env_var_name}")
+    case ":${env_var}:" in
         *:"${candidate}":*)
             ;;
         *)
             if [ "$3" = "after" ] ; then
-                eval ${envvarname}=${envvar}:${candidate}
+                eval "${env_var_name}"='${env_var}':'${candidate}'
             else
-                eval ${envvarname}=${candidate}:${envvar}
+                eval "${env_var_name}"='${candidate}':'${env_var}'
             fi
     esac
     unset envarname
