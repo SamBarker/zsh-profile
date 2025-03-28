@@ -2,14 +2,17 @@
 typeset -a projects
 
 OS=$(uname)
+_search_paths=("${HOME}/src" "${HOME}/src/strimzi" "${HOME}/src/kroxy" "${HOME}/src/kroxylicious" "${HOME}/src/flink")
 
-if [ "$OS" = 'Darwin' ]; then
-  # for MacOS
-  FIND=$(command -v gfind)
-else
-  # for Linux and Windows
-  FIND=$(which find)
-fi
+_findCommand() {
+  if [ "$OS" = 'Darwin' ]; then
+    # for MacOS
+    echo "$(command -v gfind)"
+  else
+    # for Linux and Windows
+    echo "$(command -v find)"
+  fi
+}
 
 _hasKey() {
   local var="${1}[$2]"
@@ -26,11 +29,14 @@ _buildHash() {
 }
 
 _findCheckouts() {
-  local search_dir=$1
-
-  [ -d "${search_dir}" ] && ${FIND} "${search_dir}" -maxdepth 1 -mindepth 1 -type d -printf "%f\0"  \
-    | while IFS= read -r -d '' file; do \
+  local fnd search_dir=$1
+  fnd="$(_findCommand)"
+  if [ -d "${search_dir}" ]; then
+    echo "checking ${search_dir} using ${fnd}"
+    ${fnd} "${search_dir}" -maxdepth 1 -mindepth 1 -type d -printf "%f\n"  \
+    | while IFS='' read -r file; do \
       _hasKey projects "$file" || _buildHash "${search_dir}" "${file}" ; done
+  fi
 }
 
 #Include all git projects in the directory hash table
@@ -43,12 +49,11 @@ hashCheckouts() {
       projects+=("$p")
     done <"${cache}"
   fi
-
-  _findCheckouts "${HOME}/src"
-  _findCheckouts "${HOME}/src/strimzi"
-  _findCheckouts "${HOME}/src/kroxy"
-  _findCheckouts "${HOME}/src/kroxylicious"
-  _findCheckouts "${HOME}/src/flink"
+  for p in "${_search_paths[@]}"; do
+    if [[ -r "${p}" ]]; then
+      _findCheckouts "${p}"
+    fi
+  done
 
   #Replace the cache with any updates we have added
   hash -d >"${cache}"
