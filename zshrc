@@ -160,6 +160,5 @@ export CONTAINER_ENGINE=podman
 export MY_PROFILE
 export REGISTRY_DESTINATION=quay.io/${QUAY_ORG}/kroxylicious
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+DOCKER_HOST=$(podman machine inspect --format '{{ .ConnectionInfo.PodmanSocket.Path }}')
+export DOCKER_HOST
