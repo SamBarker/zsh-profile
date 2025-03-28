@@ -136,10 +136,11 @@ if [ "$OS" = 'Darwin' ]; then
 
   pathmunge "$(brew --prefix)/opt/coreutils/libexec/gnubin"
   [[ -s "${HOME}/.config/op/plugins.sh" ]] && source "${HOME}/.config/op/plugins.sh"
-  set -x
-  envvarvmunge LD_LIBRARY_PATH /opt/async-profiler/async-profiler-3.0-macos/lib/libasyncProfiler.dylib
-  set +x
-  export LD_LIBRARY_PATH
+
+  if   [[ -s /opt/async-profiler/async-profiler-3.0-macos/lib/libasyncProfiler.dylib ]]; then
+    envvarvmunge LD_LIBRARY_PATH /opt/async-profiler/async-profiler-3.0-macos/lib/libasyncProfiler.dylib
+    export LD_LIBRARY_PATH
+  fi
 fi
 
 hashCheckouts
