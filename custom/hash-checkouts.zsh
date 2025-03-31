@@ -15,8 +15,12 @@ _findCommand() {
 }
 
 _hasKey() {
-  local var="${1}[$2]"
-  (( ${(P)+${var}} )) && return 0
+  local source_array
+  local target="${1}"
+  source_array=${(P)2}
+  if [[ ${source_array[(ie)${target}]} -le ${#source_array} ]]; then
+    return 0
+  fi
   return 1
 }
 
@@ -34,7 +38,7 @@ _findCheckouts() {
   if [ -d "${search_dir}" ]; then
     ${fnd} "${search_dir}" -maxdepth 1 -mindepth 1 -type d -printf "%f\n"  \
     | while IFS='' read -r file; do \
-      _hasKey projects "$file" || _buildHash "${search_dir}" "${file}" ; done
+      _hasKey "$file" "projects" || _buildHash "${search_dir}" "${file}" ; done
   fi
 }
 
