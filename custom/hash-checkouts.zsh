@@ -32,7 +32,6 @@ _findCheckouts() {
   local fnd search_dir=$1
   fnd="$(_findCommand)"
   if [ -d "${search_dir}" ]; then
-    echo "checking ${search_dir} using ${fnd}"
     ${fnd} "${search_dir}" -maxdepth 1 -mindepth 1 -type d -printf "%f\n"  \
     | while IFS='' read -r file; do \
       _hasKey projects "$file" || _buildHash "${search_dir}" "${file}" ; done
