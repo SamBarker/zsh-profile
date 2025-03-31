@@ -141,6 +141,9 @@ if [ "$OS" = 'Darwin' ]; then
     envvarvmunge LD_LIBRARY_PATH /opt/async-profiler/async-profiler-3.0-macos/lib/libasyncProfiler.dylib
     export LD_LIBRARY_PATH
   fi
+
+  DOCKER_HOST=$(podman machine inspect --format '{{ .ConnectionInfo.PodmanSocket.Path }}')
+  export DOCKER_HOST
 fi
 
 hashCheckouts
@@ -160,6 +163,3 @@ export DOCKER_REGISTRY=quay.io
 export CONTAINER_ENGINE=podman
 export MY_PROFILE
 export REGISTRY_DESTINATION=quay.io/${QUAY_ORG}/kroxylicious
-
-DOCKER_HOST=$(podman machine inspect --format '{{ .ConnectionInfo.PodmanSocket.Path }}')
-export DOCKER_HOST
