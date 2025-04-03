@@ -6,9 +6,6 @@ djui/alias-tips
 
 caarlos0/zsh-mkc
 
-#Themes are plugins too
-romkatv/powerlevel10k
-
 zsh-users/zsh-completions
 zsh-users/zsh-autosuggestions
 #zsh-users/zsh-apple-touchbar #looks cool but need to think about the configuration
@@ -20,7 +17,8 @@ zsh-users/zsh-history-substring-search
 peterhurford/git-it-on.zsh
 hschne/fzf-git
 
-ohmyzsh/ohmyzsh
+getantidote/use-omz
+ohmyzsh/ohmyzsh path:lib
 ohmyzsh/ohmyzsh path:plugins/git
 ohmyzsh/ohmyzsh path:plugins/keychain
 ohmyzsh/ohmyzsh path:plugins/gpg-agent
@@ -41,3 +39,6 @@ mroth/evalcache
 darvid/zsh-poetry
 matthieusb/zsh-sdkman
 #lukechilds/zsh-nvm
+
+#Themes are plugins too
+romkatv/powerlevel10k

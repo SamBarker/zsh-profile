@@ -118,15 +118,9 @@ if [ -f "${HOME}/.pyenv" ]; then
  eval "$(pyenv init -)"
 fi
 
-zsh_plugins=${ZDOTDIR:-${MY_PROFILE}}/zsh_plugins
-if [[ ! ${MY_PROFILE}/zsh_plugins_${OS}.zsh -nt ${zsh_plugins}.txt ]]; then
-  (
-    source $(brew --prefix)/opt/antidote/share/antidote/antidote.zsh
-    antidote bundle <${zsh_plugins}.txt >${zsh_plugins}_${OS}.zsh
-  )
-fi
-
-source ${zsh_plugins}_${OS}.zsh
+pathmunge /opt/homebrew/bin
+source "$(brew --prefix)/opt/antidote/share/antidote/antidote.zsh"
+antidote load ${MY_PROFILE}/zsh_plugins.txt
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
@@ -163,3 +157,5 @@ export DOCKER_REGISTRY=quay.io
 export CONTAINER_ENGINE=podman
 export MY_PROFILE
 export REGISTRY_DESTINATION=quay.io/${QUAY_ORG}/kroxylicious
+
+[[ -s "${HOME}/.sdkman/bin/sdkman-init.sh" ]] && source "${HOME}/.sdkman/bin/sdkman-init.sh"
