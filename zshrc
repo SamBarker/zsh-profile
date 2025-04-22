@@ -119,28 +119,31 @@ if [ -f "${HOME}/.pyenv" ]; then
 fi
 
 pathmunge /opt/homebrew/bin
-source "$(brew --prefix)/opt/antidote/share/antidote/antidote.zsh"
-antidote load ${MY_PROFILE}/zsh_plugins.txt
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+if [ -z "$INTELLIJ_ENVIRONMENT_READER" ]; then
+    source "$(brew --prefix)/opt/antidote/share/antidote/antidote.zsh"
+    antidote load ${MY_PROFILE}/zsh_plugins.txt
+    [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-if [ "$OS" = 'Darwin' ]; then
-  envvarvmunge MANPATH $(brew --prefix)/opt/coreutils/libexec/gnuman
-  envvarvmunge MANPATH /usr/local/man
+    if [ "$OS" = 'Darwin' ]; then
+      envvarvmunge MANPATH $(brew --prefix)/opt/coreutils/libexec/gnuman
+      envvarvmunge MANPATH /usr/local/man
 
-  pathmunge "$(brew --prefix)/opt/coreutils/libexec/gnubin"
-  [[ -s "${HOME}/.config/op/plugins.sh" ]] && source "${HOME}/.config/op/plugins.sh"
+      pathmunge "$(brew --prefix)/opt/coreutils/libexec/gnubin"
+      [[ -s "${HOME}/.config/op/plugins.sh" ]] && source "${HOME}/.config/op/plugins.sh"
 
-  if   [[ -s /opt/async-profiler/async-profiler-3.0-macos/lib/libasyncProfiler.dylib ]]; then
-    envvarvmunge LD_LIBRARY_PATH /opt/async-profiler/async-profiler-3.0-macos/lib/libasyncProfiler.dylib
-    export LD_LIBRARY_PATH
-  fi
+      if   [[ -s /opt/async-profiler/async-profiler-3.0-macos/lib/libasyncProfiler.dylib ]]; then
+        envvarvmunge LD_LIBRARY_PATH /opt/async-profiler/async-profiler-3.0-macos/lib/libasyncProfiler.dylib
+        export LD_LIBRARY_PATH
+      fi
 
-  DOCKER_HOST=$(podman machine inspect --format '{{ .ConnectionInfo.PodmanSocket.Path }}')
-  export DOCKER_HOST
+      DOCKER_HOST=$(podman machine inspect --format '{{ .ConnectionInfo.PodmanSocket.Path }}')
+      export DOCKER_HOST
+    fi
+
+    hashCheckouts
+    [[ -s "${HOME}/.sdkman/bin/sdkman-init.sh" ]] && source "${HOME}/.sdkman/bin/sdkman-init.sh"
 fi
-
-hashCheckouts
 
 pathmunge "$HOME/.cargo/bin"
 pathmunge "$HOME/bin"
@@ -157,5 +160,3 @@ export DOCKER_REGISTRY=quay.io
 export CONTAINER_ENGINE=podman
 export MY_PROFILE
 export REGISTRY_DESTINATION=quay.io/${QUAY_ORG}/kroxylicious
-
-[[ -s "${HOME}/.sdkman/bin/sdkman-init.sh" ]] && source "${HOME}/.sdkman/bin/sdkman-init.sh"
