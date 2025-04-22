@@ -1,3 +1,7 @@
+if [ -n "${ZSH_DEBUGRC+1}" ]; then
+    zmodload zsh/zprof
+fi
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -160,3 +164,7 @@ export DOCKER_REGISTRY=quay.io
 export CONTAINER_ENGINE=podman
 export MY_PROFILE
 export REGISTRY_DESTINATION=quay.io/${QUAY_ORG}/kroxylicious
+
+if [ -n "${ZSH_DEBUGRC+1}" ]; then
+    zprof
+fi
