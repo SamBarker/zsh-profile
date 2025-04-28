@@ -126,8 +126,9 @@ pathmunge /opt/homebrew/bin
 
 
 function _load_antidote() {
+    local zsh_plugins=${MY_PROFILE}/zsh_plugins
+    local antidote_static=${XDG_CACHE_HOME:-$HOME/.cache}/.zsh-plugins.zsh
     source "$(brew --prefix)/opt/antidote/share/antidote/antidote.zsh"
-    zsh_plugins=${MY_PROFILE}/zsh_plugins
 
     # Ensure the .zsh_plugins.txt file exists so you can add plugins.
     [[ -f ${zsh_plugins}.txt ]] || touch ${zsh_plugins}.txt
@@ -137,12 +138,13 @@ function _load_antidote() {
     autoload -Uz antidote
 
     # Generate a new static file whenever .zsh_plugins.txt is updated.
-    if [[ ! ${zsh_plugins}.zsh -nt ${zsh_plugins}.txt ]]; then
-      antidote bundle <${zsh_plugins}.txt >|${zsh_plugins}-$(uname).zsh
+    if [[ ! ${antidote_static}  -nt ${zsh_plugins}.txt ]]; then
+      echo "running antidote bundle"
+      antidote bundle <${zsh_plugins}.txt >|${antidote_static}
     fi
 
     # Source your static plugins file.
-    source ${zsh_plugins}-$(uname).zsh
+    source ${antidote_static}
 }
 
 if [ -z "$INTELLIJ_ENVIRONMENT_READER" ]; then
