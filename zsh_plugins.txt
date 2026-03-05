@@ -38,7 +38,7 @@ mroth/evalcache
 
 darvid/zsh-poetry
 matthieusb/zsh-sdkman
-#lukechilds/zsh-nvm
+lukechilds/zsh-nvm
 
 #Themes are plugins too
 romkatv/powerlevel10k
