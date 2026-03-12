@@ -4,13 +4,14 @@
 #
 # Usage:
 #   weekly-contributions.sh [--user LOGIN] [--since YYYY-MM-DD] [--until YYYY-MM-DD]
+#                           [--week-ends-on YYYY-MM-DD] [--outdir PATH]
 #
 # Defaults:
 #   --user   SamBarker
 #   --since  7 days ago
 #   --until  today
 #
-# Output: plain text summary to stdout. Redirect to a file as needed.
+# --week-ends-on YYYY-MM-DD sets UNTIL to that date and SINCE to 7 days before it.
 
 set -euo pipefail
 
@@ -19,17 +20,24 @@ USER=SamBarker
 SINCE=$(date -v-7d +%Y-%m-%d 2>/dev/null || date -d '7 days ago' +%Y-%m-%d)
 UNTIL=$(date +%Y-%m-%d)
 ORG=kroxylicious
-OUTDIR="${HOME}/contributions/${UNTIL}"
+OUTDIR=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --user)  USER="$2";  shift 2 ;;
-        --since) SINCE="$2"; shift 2 ;;
-        --until) UNTIL="$2"; shift 2 ;;
-        --outdir) OUTDIR="$2"; shift 2 ;;
+        --user)         USER="$2";   shift 2 ;;
+        --since)        SINCE="$2";  shift 2 ;;
+        --until)        UNTIL="$2";  shift 2 ;;
+        --outdir)       OUTDIR="$2"; shift 2 ;;
+        --week-ends-on)
+            UNTIL="$2"
+            SINCE=$(date -j -v-7d -f "%Y-%m-%d" "$2" +%Y-%m-%d 2>/dev/null \
+                    || date -d "$2 - 7 days" +%Y-%m-%d)
+            shift 2 ;;
         *) echo "Unknown option: $1" >&2; exit 1 ;;
     esac
 done
+
+OUTDIR="${OUTDIR:-${HOME}/contributions/${UNTIL}}"
 
 mkdir -p "${OUTDIR}"
 echo "Writing to ${OUTDIR}"
