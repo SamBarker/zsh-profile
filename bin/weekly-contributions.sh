@@ -62,9 +62,8 @@ $GH api "search/issues?q=reviewed-by:${USER}+org:${ORG}+is:pr+updated:>=${SINCE}
 
 # --- Issues/PRs commented on (not authored) ---
 echo "Fetching items commented on..."
-# shellcheck disable=SC2016 # $user is a jq variable passed via --arg, not a bash variable
 $GH api "search/issues?q=commenter:${USER}+org:${ORG}+updated:>=${SINCE}&per_page=50" \
-    --jq --arg user "$USER" \
+    | jq -r --arg user "$USER" \
     '.items[] | select(.user.login != $user) | "- \(if .pull_request then "PR" else "Issue" end) #\(.number) \(.title) (\(.repository_url | split("/") | last)) — updated \(.updated_at[:10])"' \
     > "${OUTDIR}/commented-on.md"
 
