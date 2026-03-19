@@ -127,14 +127,17 @@ pathmunge /opt/homebrew/bin
 
 function _load_antidote() {
     local zsh_plugins=${MY_PROFILE}/zsh_plugins
-    local antidote_static=${XDG_CACHE_HOME:-$HOME/.cache}/.zsh-plugins.zsh
-    source "$(brew --prefix)/opt/antidote/share/antidote/antidote.zsh"
-
+    local antidote_static=${XDG_CACHE_HOME:-$HOME/.cache}/.zsh_plugins_$(uname).zsh
+    if [ "$OS" = 'Darwin' ]; then
+        source "$(brew --prefix)/opt/antidote/share/antidote/antidote.zsh"
+    else
+        source ${HOME}/.antidote/antidote.zsh
+    fi
     # Ensure the .zsh_plugins.txt file exists so you can add plugins.
     [[ -f ${zsh_plugins}.txt ]] || touch ${zsh_plugins}.txt
 
     # Lazy-load antidote from its functions directory.
-    fpath=(/path/to/antidote/functions $fpath)
+#     fpath=(/path/to/antidote/functions $fpath)
     autoload -Uz antidote
 
     # Generate a new static file whenever .zsh_plugins.txt is updated.
