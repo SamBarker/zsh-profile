@@ -14,6 +14,7 @@ updateFork() {
   else
     git branch -f "${main_branch}" upstream/"${main_branch}"  # on a feature branch — update main without switching
   fi
+  git fetch origin "${main_branch}"  # refresh stale tracking info so --force-with-lease works correctly
   git push --force-with-lease origin "${main_branch}"
 }
 
