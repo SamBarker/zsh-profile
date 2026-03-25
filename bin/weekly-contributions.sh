@@ -40,37 +40,39 @@ while [[ $# -gt 0 ]]; do
 done
 
 [[ ${#ORGS[@]} -eq 0 ]] && ORGS=(kroxylicious)
-ORG_QUERY=$(IFS=+; echo "${ORGS[*]/#/org:}")
 
 OUTDIR="${OUTDIR:-${HOME}/contributions/${UNTIL}}"
 
 mkdir -p "${OUTDIR}"
 echo "Writing to ${OUTDIR}"
 
-# --- PRs authored ---
-echo "Fetching PRs authored..."
-$GH api "search/issues?q=author:${USER}+${ORG_QUERY}+is:pr+updated:>=${SINCE}&per_page=50" \
-    --jq '.items[] | "- [\(.state|ascii_upcase)] #\(.number) \(.title) (\(.repository_url | split("/") | .[-2:] | join("/"))) — created \(.created_at[:10]), updated \(.updated_at[:10])"' \
-    > "${OUTDIR}/prs-authored.md"
+for org in "${ORGS[@]}"; do
+    if ! $GH api "orgs/${org}" --silent 2>/dev/null; then
+        echo "Warning: org '${org}' not found or not accessible — check for typos" >&2
+        continue
+    fi
 
-# --- Issues opened ---
-echo "Fetching issues opened..."
-$GH api "search/issues?q=author:${USER}+${ORG_QUERY}+is:issue+created:>=${SINCE}&per_page=50" \
-    --jq '.items[] | "- [\(.state|ascii_upcase)] #\(.number) \(.title) (\(.repository_url | split("/") | .[-2:] | join("/"))) — \(.created_at[:10])"' \
-    > "${OUTDIR}/issues-opened.md"
+    echo "[$org] Fetching PRs authored..."
+    $GH api "search/issues?q=author:${USER}+org:${org}+is:pr+updated:>=${SINCE}&per_page=50" \
+        --jq '.items[] | "- [\(.state|ascii_upcase)] #\(.number) \(.title) (\(.repository_url | split("/") | .[-2:] | join("/"))) — created \(.created_at[:10]), updated \(.updated_at[:10])"' \
+        > "${OUTDIR}/prs-authored-${org}.md"
 
-# --- PRs reviewed ---
-echo "Fetching PRs reviewed..."
-$GH api "search/issues?q=reviewed-by:${USER}+${ORG_QUERY}+is:pr+updated:>=${SINCE}&per_page=50" \
-    --jq '.items[] | "- #\(.number) \(.title) (\(.repository_url | split("/") | .[-2:] | join("/"))) — updated \(.updated_at[:10])"' \
-    > "${OUTDIR}/prs-reviewed.md"
+    echo "[$org] Fetching issues opened..."
+    $GH api "search/issues?q=author:${USER}+org:${org}+is:issue+created:>=${SINCE}&per_page=50" \
+        --jq '.items[] | "- [\(.state|ascii_upcase)] #\(.number) \(.title) (\(.repository_url | split("/") | .[-2:] | join("/"))) — \(.created_at[:10])"' \
+        > "${OUTDIR}/issues-opened-${org}.md"
 
-# --- Issues/PRs commented on (not authored) ---
-echo "Fetching items commented on..."
-$GH api "search/issues?q=commenter:${USER}+${ORG_QUERY}+updated:>=${SINCE}&per_page=50" \
-    | jq -r --arg user "$USER" \
-    '.items[] | select(.user.login != $user) | "- \(if .pull_request then "PR" else "Issue" end) #\(.number) \(.title) (\(.repository_url | split("/") | .[-2:] | join("/"))) — updated \(.updated_at[:10])"' \
-    > "${OUTDIR}/commented-on.md"
+    echo "[$org] Fetching PRs reviewed..."
+    $GH api "search/issues?q=reviewed-by:${USER}+org:${org}+is:pr+updated:>=${SINCE}&per_page=50" \
+        --jq '.items[] | "- #\(.number) \(.title) (\(.repository_url | split("/") | .[-2:] | join("/"))) — updated \(.updated_at[:10])"' \
+        > "${OUTDIR}/prs-reviewed-${org}.md"
+
+    echo "[$org] Fetching items commented on..."
+    $GH api "search/issues?q=commenter:${USER}+org:${org}+updated:>=${SINCE}&per_page=50" \
+        | jq -r --arg user "$USER" \
+        '.items[] | select(.user.login != $user) | "- \(if .pull_request then "PR" else "Issue" end) #\(.number) \(.title) (\(.repository_url | split("/") | .[-2:] | join("/"))) — updated \(.updated_at[:10])"' \
+        > "${OUTDIR}/commented-on-${org}.md"
+done
 
 echo "Done. Files written:"
 ls -1 "${OUTDIR}/"
