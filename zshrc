@@ -182,6 +182,7 @@ fi
 
 pathmunge "$HOME/.cargo/bin"
 pathmunge "$HOME/bin"
+pathmunge "${MY_PROFILE}/bin"
 
 # export GPG_TTY=$(tty)
 export VAULT_ADDR=https://vault.devshift.net
