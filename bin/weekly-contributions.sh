@@ -54,23 +54,23 @@ for org in "${ORGS[@]}"; do
 
     echo "[$org] Fetching PRs authored..."
     $GH api "search/issues?q=author:${USER}+org:${org}+is:pr+updated:>=${SINCE}&per_page=50" \
-        --jq '.items[] | "- [\(.state|ascii_upcase)] #\(.number) \(.title) (\(.repository_url | split("/") | .[-2:] | join("/"))) — created \(.created_at[:10]), updated \(.updated_at[:10])"' \
+        --jq '.items[] | "- [\(.state|ascii_upcase)] \(.title) \(.html_url) — created \(.created_at[:10]), updated \(.updated_at[:10])"' \
         > "${OUTDIR}/prs-authored-${org}.md"
 
     echo "[$org] Fetching issues opened..."
     $GH api "search/issues?q=author:${USER}+org:${org}+is:issue+created:>=${SINCE}&per_page=50" \
-        --jq '.items[] | "- [\(.state|ascii_upcase)] #\(.number) \(.title) (\(.repository_url | split("/") | .[-2:] | join("/"))) — \(.created_at[:10])"' \
+        --jq '.items[] | "- [\(.state|ascii_upcase)] \(.title) \(.html_url) — \(.created_at[:10])"' \
         > "${OUTDIR}/issues-opened-${org}.md"
 
     echo "[$org] Fetching PRs reviewed..."
     $GH api "search/issues?q=reviewed-by:${USER}+org:${org}+is:pr+updated:>=${SINCE}&per_page=50" \
-        --jq '.items[] | "- #\(.number) \(.title) (\(.repository_url | split("/") | .[-2:] | join("/"))) — updated \(.updated_at[:10])"' \
+        --jq '.items[] | "- \(.title) \(.html_url) — updated \(.updated_at[:10])"' \
         > "${OUTDIR}/prs-reviewed-${org}.md"
 
     echo "[$org] Fetching items commented on..."
     $GH api "search/issues?q=commenter:${USER}+org:${org}+updated:>=${SINCE}&per_page=50" \
         | jq -r --arg user "$USER" \
-        '.items[] | select(.user.login != $user) | "- \(if .pull_request then "PR" else "Issue" end) #\(.number) \(.title) (\(.repository_url | split("/") | .[-2:] | join("/"))) — updated \(.updated_at[:10])"' \
+        '.items[] | select(.user.login != $user) | "- \(if .pull_request then "PR" else "Issue" end) \(.title) \(.html_url) — updated \(.updated_at[:10])"' \
         > "${OUTDIR}/commented-on-${org}.md"
 done
 

@@ -52,7 +52,7 @@ for org in "${orgs[@]}"; do
         "${INDIR}/commented-on-${org}.md" \
         | claude -p "These are my GitHub contributions in the ${org} org for the week ending ${WEEK_END}.${notes_section}
 
-Write a short weekly summary in the style of a plain personal update — a few paragraphs of prose, loosely grouped by theme, no headings or bullet points. The tone should be direct and understated: technical but not jargon-heavy, honest about blockers or open questions, mentions collaborators by name naturally. No corporate language, no filler phrases, no exclamation marks. Write in first person as if I wrote it myself. Where I have provided additional context or corrections, use my exact wording as much as possible — treat it as text I have already written that should appear in the summary largely verbatim, woven into the surrounding prose." \
+Write a short weekly summary in the style of a plain personal update — a few paragraphs of prose, loosely grouped by theme, no headings or bullet points. The tone should be direct and understated: technical but not jargon-heavy, honest about blockers or open questions, mentions collaborators by name naturally. No corporate language, no filler phrases, no exclamation marks. Write in first person as if I wrote it myself. Where I have provided additional context or corrections, use my exact wording as much as possible — treat it as text I have already written that should appear in the summary largely verbatim, woven into the surrounding prose. Include the full GitHub URLs from the raw data when referencing PRs or issues." \
         > "${INDIR}/summary-${org}.md"
     echo "Written to ${INDIR}/summary-${org}.md"
 done
