@@ -1,0 +1,27 @@
+  #!/usr/bin/env zsh
+  # Usage: git-clean-squashed [--dry-run]
+  set -euo pipefail
+
+  DRY_RUN=false
+  [[ "${1:-}" == "--dry-run" ]] && DRY_RUN=true
+
+  git fetch upstream --prune
+  git fetch origin --prune
+
+  git for-each-ref refs/heads/ --format='%(refname:short)' \
+    | grep -v '^main$' \
+    | while read -r branch; do
+        merge_base=$(git merge-base upstream/main "$branch" 2>/dev/null) || continue
+        # Synthesize a single squash commit with the same tree as the branch
+        squash=$(git commit-tree "$(git rev-parse "$branch^{tree}")" -p "$merge_base" -m "_")
+        # git cherry returns "-" prefix if an equivalent patch exists in upstream/main
+        if [[ $(git cherry upstream/main "$squash") == "-"* ]]; then
+          echo "Squash-merged: $branch"
+          if [[ "$DRY_RUN" == false ]]; then
+            git branch -D "$branch"
+            git push origin --delete "$branch" 2>/dev/null || true
+          fi
+        else
+          echo "Still open:    $branch"
+        fi
+      done

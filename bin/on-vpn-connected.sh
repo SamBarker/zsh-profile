@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 CONNECTED_VPN=$(osascript -e 'tell application "Tunnelblick" to get name of configurations where state = "CONNECTED"')
 
