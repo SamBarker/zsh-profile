@@ -65,7 +65,7 @@ done
 echo ""
 printf "Use org headings in the email? [y/N] "
 read -r use_headings </dev/tty
-use_headings="${use_headings,,}"
+use_headings=$(echo "$use_headings" | tr '[:upper:]' '[:lower:]')
 
 if [[ "${use_headings}" == "y" ]]; then
     heading_instruction="Use a heading for each org."
