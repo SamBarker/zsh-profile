@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 # Summarises a weekly contributions directory produced by weekly-contributions.sh.
 # Pipes the 4 raw files through claude -p to produce a themed summary.
 #

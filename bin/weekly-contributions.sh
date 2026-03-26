@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 # Dumps a raw summary of GitHub contributions for a given user
 # across one or more GitHub orgs for the last 7 days (or a custom date range).
 #

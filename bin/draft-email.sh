@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 # Interactively reviews per-org contribution summaries and drafts a single email.
 #
 # Usage:
@@ -65,7 +65,7 @@ done
 echo ""
 printf "Use org headings in the email? [y/N] "
 read -r use_headings </dev/tty
-use_headings=$(echo "$use_headings" | tr '[:upper:]' '[:lower:]')
+use_headings="${use_headings,,}"
 
 if [[ "${use_headings}" == "y" ]]; then
     heading_instruction="Use a heading for each org."
