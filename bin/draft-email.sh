@@ -76,7 +76,7 @@ fi
 echo ""
 echo "Drafting email..."
 
-echo "$content" | claude -p "These are my weekly contribution summaries for the week ending ${WEEK_END}, one per org. ${heading_instruction} Where corrections are provided, incorporate them using my exact wording. Write a short weekly email in the style of a plain personal update — prose, direct and understated, technical but not jargon-heavy, honest about blockers. No corporate language, no filler phrases, no exclamation marks. First person as if I wrote it myself." \
+echo "$content" | claude -p "These are my weekly contribution summaries for the week ending ${WEEK_END}, one per org. ${heading_instruction} Where corrections are provided, incorporate them using my exact wording. Write a short & consise weekly email in the style of a plain personal update — prose, direct and understated, technical but not jargon-heavy, honest about blockers. No corporate language, no filler phrases, no exclamation marks. First person as if I wrote it myself." \
     > "${INDIR}/email-draft.md"
 
 echo ""
