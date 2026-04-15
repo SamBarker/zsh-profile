@@ -1,0 +1,11 @@
+# Deny by default — only whitelist files worth versioning
+*
+
+# Global config
+!.gitignore
+!CLAUDE.md
+!settings.json
+
+# Custom skills
+!skills/
+!skills/**
