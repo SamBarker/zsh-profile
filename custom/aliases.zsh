@@ -8,7 +8,7 @@ alias mcb='mvn clean install -Dqucik'
 updateFork() {
   local main_branch
   main_branch=$(git_main_branch)
-  git fetch upstream
+  git fetch upstream "${main_branch}"
   if [[ $(git_current_branch) == "${main_branch}" ]]; then
     git rebase "upstream/${main_branch}"   # already on main — rebase in place
   else
