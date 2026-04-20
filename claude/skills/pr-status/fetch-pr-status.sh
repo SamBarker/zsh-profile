@@ -62,6 +62,7 @@ REPO="${OWNER_REPO##*/}"
           isResolved
           comments(first: 20) {
             nodes {
+              databaseId
               author { login }
               createdAt
               body
@@ -110,6 +111,7 @@ REPO="${OWNER_REPO##*/}"
     select(.isResolved == false) | {
       file: .comments.nodes[0].path,
       line: .comments.nodes[0].line,
+      replyToId: .comments.nodes[0].databaseId,
       comments: [.comments.nodes[] | {
         author: .author.login,
         at: .createdAt,
