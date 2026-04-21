@@ -14,7 +14,16 @@ PR_JSON=$("${GH}" pr view --json number,title,url,state 2>&1) || {
     exit 1
 }
 
-PR_NUMBER=$(echo "${PR_JSON}" | sed -n 's/.*"number":\([0-9]*\).*/\1/p')
+PR_STATE=$(echo "${PR_JSON}" | jq -r '.state')
+if [[ "${PR_STATE}" == "MERGED" ]]; then
+    echo "PR #$(echo "${PR_JSON}" | jq -r '.number') ($(echo "${PR_JSON}" | jq -r '.title')) has been merged" >&2
+    exit 0
+elif [[ "${PR_STATE}" == "CLOSED" ]]; then
+    echo "PR #$(echo "${PR_JSON}" | jq -r '.number') ($(echo "${PR_JSON}" | jq -r '.title')) is closed" >&2
+    exit 0
+fi
+
+PR_NUMBER=$(echo "${PR_JSON}" | jq -r '.number')
 OWNER_REPO=$("${GH}" repo view --json nameWithOwner --jq '.nameWithOwner')
 OWNER="${OWNER_REPO%%/*}"
 REPO="${OWNER_REPO##*/}"
