@@ -46,9 +46,11 @@ REPO="${OWNER_REPO##*/}"
       }
       reviewThreads(first: 100) {
         nodes {
+          id
           isResolved
           comments(first: 10) {
             nodes {
+              databaseId
               author { login }
               createdAt
               body
@@ -56,6 +58,15 @@ REPO="${OWNER_REPO##*/}"
               line
             }
           }
+        }
+      }
+      comments(first: 50) {
+        nodes {
+          databaseId
+          author { login }
+          createdAt
+          body
+          url
         }
       }
     }
@@ -74,13 +85,23 @@ REPO="${OWNER_REPO##*/}"
   }],
   unresolved: [.data.repository.pullRequest.reviewThreads.nodes[] |
     select(.isResolved == false) | {
+      threadId: .id,
       file: .comments.nodes[0].path,
       line: .comments.nodes[0].line,
       author: .comments.nodes[0].author.login,
+      firstCommentId: .comments.nodes[0].databaseId,
       firstComment: .comments.nodes[0].body,
       lastAuthor: .comments.nodes[-1].author.login,
+      lastCommentId: .comments.nodes[-1].databaseId,
       lastComment: .comments.nodes[-1].body,
       commentCount: (.comments.nodes | length)
     }
-  ]
+  ],
+  issueComments: [.data.repository.pullRequest.comments.nodes[] | {
+    id: .databaseId,
+    author: .author.login,
+    createdAt,
+    body,
+    url
+  }]
 }'
