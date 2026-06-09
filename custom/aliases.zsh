@@ -19,5 +19,5 @@ updateFork() {
 }
 
 gnb() {
-  updateFork && git checkout -b "$1" "upstream/$(git_main_branch)" && git config branch."$1".remote origin && git config branch."$1".merge refs/heads/"$1"
+  updateFork && git checkout -b "$1" "upstream/$(git_main_branch)" && git push -u origin "$1"
   }
