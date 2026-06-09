@@ -4,48 +4,40 @@ This file provides default guidance to Claude Code (claude.ai/code) for all proj
 
 ## Test-Driven Development and Commit Discipline
 
-### Core Principles
+### PRs vs Commits
 
-1. **Red, Green, Refactor**: Write failing test → Make it pass → Refactor
-2. **Incremental Commits**: Commit after each logical step, not when "everything is done"
-3. **User Story Focus**: Each commit should answer "what can the user/developer do now?"
-4. **Small Commits**: Target ~100-200 lines per commit (max ~300)
-5. **Refactoring is Mandatory**: Always refactor after making tests pass
+**PRs tell a story**: a PR delivers something — fixes a bug, adds a capability, pays down debt. The PR description explains what changed and why at the story level.
 
-### Commit Sequence Rules
+**Commits are the coherent steps in that arc**: each commit is one subject fully treated. It should be describable in a single sentence. If you can't describe it in one sentence, it's probably too big.
 
-**YOU MUST follow this pattern for all feature work:**
+### Coding Rhythm: Red, Green, Refactor
 
-1. Write a failing test (commit: "Add failing test for X")
-2. Make the test pass with minimal code (commit: "Implement X to pass test")
-3. Refactor if needed (commit: "Refactor X for clarity")
-4. Repeat for next feature
+Work in small cycles at the code level:
 
-**For larger features, break into incremental user stories:**
-- NOT: "Add entire authentication system" (1000 lines)
-- YES:
-  - Commit 1: "Add test that user can be created" → make it pass
-  - Commit 2: "Add test that user can log in" → make it pass
-  - Commit 3: "Add test that invalid credentials fail" → make it pass
-  - Commit 4: "Refactor authentication to extract password hashing"
+1. Write one failing test — failing to compile is **NOT** a Red test; add stubs first so it compiles and fails for the right reason
+2. Apply the simplest production code that makes it pass
+3. Write the next test to force the design to handle another case
+4. Sophisticate the production code to pass it
+5. Refactor when the shape of the design becomes clear
 
-### When to Commit
+This is a **coding rhythm, not a commit rhythm**. Commit when a subject is complete, not after every assertion.
 
-**Commit immediately after:**
-- Making a failing test pass
-- Completing a refactoring step
-- Adding a discrete new capability
-- Before starting a different logical change
+### Commit Boundaries
+
+A commit is one subject fully treated: the production code and the tests that exercise it (happy path, edge cases, error cases, whatever that subject needs). **The test suite must be green after every commit.**
 
 **DO NOT:**
-- Batch multiple features into one commit
-- Wait until everything is "done"
-- Create commits based on file types ("add all tests", "add all utils")
+- Separate tests from the production code that makes them pass across different commits
+- Create commits based on technical type: "add all tests", "add all production code"
+- When applying the same change to N independent subjects (e.g. 6 mappers, 4 handlers): commit all N tests RED then all N fixes GREEN — this is still a horizontal slice
+
+**DO:**
+- Commit per subject: if fixing the same bug in 6 mappers, commit 1 = regression test(s) + fix for mapper 1, commit 2 = regression test(s) + fix for mapper 2, etc.
+- Refactor in its own commit after tests pass, when the refactoring is non-trivial
 
 ### Commit Message Format
 
-Commit messages should be descriptive but don't need to follow a rigid format.
-Include enough context for someone reviewing the branch to understand each step.
+Give a reviewer enough context to understand the step without reading the diff.
 
 ```
 <What changed and why>
@@ -79,12 +71,6 @@ PR titles **MUST** follow [Conventional Commits](https://www.conventionalcommits
 
 PR bodies should follow the project's PR template if one exists.
 
-### Maximum Commit Size
-
-- **Soft limit**: 200 lines changed
-- **Hard limit**: 300 lines changed
-- If approaching limit, you're batching too much - break it down
-
 ## Git Workflow
 
 - **YOU MUST NEVER commit directly to `main`.** All work happens on feature branches. All changes reach `main` via pull request. Create a feature branch before making any commits.
@@ -92,17 +78,18 @@ PR bodies should follow the project's PR template if one exists.
 - 
 ### Working with Claude
 
+Prefer simple, minimal solutions. Don't over-engineer. If a problem can be solved with a config change or env var, don't write Java code. Propose the simplest approach first.
+
 **After asking Claude to implement a feature:**
 
-1. Ask: "What's the smallest first step we can test?"
-2. Implement only that step
-3. Commit it
-4. Ask: "What's the next small step?"
-5. Repeat
+1. Ask: "What's the first subject we can treat completely?"
+2. Implement that subject — tests + production code — and commit it
+3. Ask: "What's the next subject?"
+4. Repeat
 
 **If Claude produces too much at once:**
-- Stop Claude and say: "That's too much. Let's commit what we have so far incrementally."
-- Claude will help you break it into proper commits
+- Stop Claude and say: "That's too much. Let's break this into one subject per commit."
+- Claude will help you identify the subject boundaries
 
 Do not create PRs, push branches, or post GitHub comments unless explicitly asked. When in doubt, ask before taking actions that are hard to undo.
 
@@ -113,49 +100,14 @@ Do not create PRs, push branches, or post GitHub comments unless explicitly aske
 - Tests must still pass after refactoring
 - Refactoring commits should clearly state what improved
 
-### Example: Adding a New Feature
-
-**Bad approach:**
-```
-Commit: "Add testing infrastructure"
-- 7 files changed, 1181 insertions
-```
-
-**Good approach (incremental TDD):**
-```
-Commit 1: "Verify Helm chart passes lint"
-- pom.xml (minimal)
-- HelmLintTest.java (inline execution)
-- ~50 lines
-
-Commit 2: "Extract Helm CLI execution to utility"
-- HelmUtils.java
-- Refactor HelmLintTest
-- ~100 lines
-
-Commit 3: "Render Helm templates without errors"
-- Add renderTemplate() to HelmUtils
-- Add HelmTemplateRenderingTest
-- ~150 lines
-
-[...continue incrementally...]
-```
-
 ### Red Flags
 
 If Claude presents:
-- ❌ "I've created 5 files..."
-- ❌ "Here's the complete implementation..."
-- ❌ More than 300 lines of changes at once
+- ❌ "I'll add all the tests first, then fix the production code" — horizontal slice
+- ❌ "I've updated all 6 mappers / handlers / services..." in a single commit when each is an independent subject
+- ❌ A commit that can't be described in one sentence
 
-Stop and request incremental steps.
-
-### Questions to Ask Before Committing
-
-1. "Can someone review this in < 5 minutes?" (If no: too big)
-2. "What can we do now that we couldn't before?" (User story)
-3. "Are there multiple logical changes here?" (If yes: split it)
-4. "Could I revert this without losing other work?" (Independence)
+Stop and request incremental steps per subject.
 
 ## Shell Environment
 
@@ -169,6 +121,31 @@ Use the `${ARRAY[@]+"${ARRAY[@]}"}` idiom for safe empty array expansion under `
 
 **Container-run scripts** (scripts that execute inside Docker/Kubernetes containers) may use bash 4+
 features freely — Linux containers ship with a modern bash.
+
+## GitHub API Patterns
+
+Always use `/opt/homebrew/bin/gh` (see 1Password note below). Key endpoint shapes — get
+these right before calling, the PR number is always required in the path:
+
+```bash
+# Reply to a review thread (note: PR number required, NOT just /pulls/comments/...)
+gh api repos/OWNER/REPO/pulls/PR_NUMBER/comments/COMMENT_ID/replies \
+  --method POST --field body="..."
+
+# Create a review with inline comments
+gh api repos/OWNER/REPO/pulls/PR_NUMBER/reviews \
+  --method POST \
+  --field commit_id="SHA" \
+  --field event="COMMENT" \
+  --field body="..." \
+  --field "comments[][path]=..." \
+  --field "comments[][line]=NNN" \
+  --field "comments[][side]=RIGHT" \
+  --field "comments[][body]=..."
+
+# The comment ID for replying is the databaseId of the first comment in a thread,
+# NOT the GraphQL node id. Use --jq '.databaseId' or check the REST API response.
+```
 
 ## 1Password and `gh` CLI
 
@@ -207,6 +184,13 @@ When shell execution is genuinely required, prefer compact output flags:
 - **tree**: Use `-L <depth> --noreport`, add `-I` to exclude noisy dirs
 - **git log**: Use `--oneline` and limit with `-N`
 - **ls**: Use `-1`; avoid `-la` unless metadata is needed
+
+## PR Review — Design Philosophy
+
+When reviewing PRs (including via the pr-review skill), read and apply the
+design philosophy prompts in `~/.claude/design-philosophy-review-reference.md`.
+These are prompts for consideration — use them to surface questions worth
+asking, not as pass/fail criteria.
 
 ## Communication Style
 
