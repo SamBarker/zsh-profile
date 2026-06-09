@@ -1,0 +1,58 @@
+#!/usr/bin/env zsh
+# Usage: gh-automerge-queue [owner/repo]
+# Lists all PRs with auto-merge enabled, with CI and review status.
+# Defaults to the upstream repo of the current git directory.
+set -euo pipefail
+
+if [[ -n "${1:-}" ]]; then
+  REPO="$1"
+else
+  REPO=$(git remote get-url upstream 2>/dev/null | sed 's|.*github.com[:/]\(.*\)\.git|\1|' | sed 's|.*github.com[:/]\(.*\)|\1|')
+  if [[ -z "$REPO" ]]; then
+    echo "Could not determine repo from upstream remote. Pass owner/repo as an argument." >&2
+    exit 1
+  fi
+fi
+
+echo "Auto-merge queue for ${REPO}:"
+echo ""
+
+tmpfile=$(mktemp)
+trap "rm -f $tmpfile" EXIT
+
+/opt/homebrew/bin/gh pr list --repo "$REPO" --json number,title,autoMergeRequest,reviewDecision --limit 100 \
+  | python3 -c "
+import json, sys
+prs = json.load(sys.stdin)
+auto = [p for p in prs if p['autoMergeRequest']]
+auto.sort(key=lambda p: p['autoMergeRequest']['enabledAt'])
+for p in auto:
+    print(p['number'], p['reviewDecision'], p['title'][:60])
+" > "$tmpfile"
+
+if [[ ! -s "$tmpfile" ]]; then
+  echo "No PRs with auto-merge enabled."
+  exit 0
+fi
+
+printf "%-6s %-12s %-10s %s\n" "PR" "REVIEW" "CI" "TITLE"
+printf "%-6s %-12s %-10s %s\n" "------" "------------" "----------" "-----"
+
+while IFS=' ' read -r pr_number review title; do
+  ci_out=$(/opt/homebrew/bin/gh pr checks "$pr_number" --repo "$REPO" 2>&1 || true)
+  if echo "$ci_out" | grep -q "fail" 2>/dev/null; then
+    ci="❌ fail"
+  elif echo "$ci_out" | grep -q "pending" 2>/dev/null; then
+    ci="⏳ pending"
+  else
+    ci="✅ green"
+  fi
+
+  case "$review" in
+    APPROVED)       review_icon="✅" ;;
+    REVIEW_REQUIRED) review_icon="👀 needed" ;;
+    *)              review_icon="$review" ;;
+  esac
+
+  printf "#%-5s %-12s %-10s %s\n" "$pr_number" "$review_icon" "$ci" "$title"
+done < "$tmpfile"
