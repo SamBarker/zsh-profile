@@ -76,7 +76,7 @@ fi
 echo ""
 echo "Drafting email..."
 
-echo "$content" | claude -p "These are my weekly contribution summaries for the week ending ${WEEK_END}, one per org. ${heading_instruction} Where corrections are provided, incorporate them using my exact wording. Write a short & consise weekly email in the style of a plain personal update — prose, direct and understated, technical but not jargon-heavy, honest about blockers. No corporate language, no filler phrases, no exclamation marks. First person as if I wrote it myself." \
+echo "$content" | claude -p "These are my weekly contribution summaries for the week ending ${WEEK_END}, one per org. ${heading_instruction} Where corrections are provided, incorporate them using my exact wording. Write a short & consise weekly email in the style of a plain personal update — prose, direct and understated, technical but not jargon-heavy, honest about blockers. No corporate language, no filler phrases, no exclamation marks. First person as if I wrote it myself. Preserve all GitHub URLs from the summaries as markdown links." \
     > "${INDIR}/email-draft.md"
 
 echo ""
@@ -90,3 +90,12 @@ fi
 
 echo ""
 echo "Written to ${INDIR}/email-draft.md"
+
+if command -v pandoc &>/dev/null; then
+    HTML_DRAFT="${INDIR}/email-draft.html"
+    pandoc -f gfm -t html5 "${INDIR}/email-draft.md" -o "${HTML_DRAFT}"
+    open "${HTML_DRAFT}"
+    echo "HTML draft opened in browser — Cmd+A, Cmd+C to copy, then paste into Gmail"
+else
+    echo "(pandoc not found — install with: brew install pandoc)"
+fi
