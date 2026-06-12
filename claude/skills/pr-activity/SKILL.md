@@ -5,13 +5,8 @@ description: "PR Activity — Current Branch"
 
 ## PR Activity — Current Branch
 
-Catch up on what's happened on the PR for the current branch. This skill
-**reports the current state of discussion** — it does not generate new review
-feedback, suggest code changes, or offer opinions on the code. Its job is to
-help Sam understand where things stand so he can decide what to do next.
-
-Automatically detects whether Sam is the author or a reviewer and adjusts
-focus accordingly.
+Catch up on what's happened on the PR for the current branch. Automatically
+detects whether Sam is the author or a reviewer and adjusts focus accordingly.
 
 ### Data Collection
 
@@ -96,9 +91,6 @@ A short prioritised list — e.g. "re-review threads where author responded",
 
 ### Rules
 
-- **Report, don't review.** Summarise what others have said. Do not generate
-  your own review comments, code suggestions, or opinions on the code. If Sam
-  wants a review, he will use `/pr-review`.
 - Only show **unresolved** review threads — do not include resolved ones
 - Show **all** issue-level comments — they have no resolved state
 - Do NOT post replies, resolve threads, or push until Sam confirms
