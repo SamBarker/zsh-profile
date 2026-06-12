@@ -1,30 +1,98 @@
+---
+name: pr-activity
+description: "PR Activity — Current Branch"
+---
+
 ## PR Activity — Current Branch
 
-Summarise outstanding feedback on the PR for the current branch.
+Catch up on what's happened on the PR for the current branch. Automatically
+detects whether Sam is the author or a reviewer and adjusts focus accordingly.
 
 ### Data Collection
 
-Run the helper script to fetch all data in a single invocation:
+Run the shared fetch script:
 
 ```bash
-/Users/sbarker/.claude/skills/pr-activity/fetch-pr-activity.sh
+/Users/sbarker/.claude/skills/shared/fetch-pr-data.sh
 ```
 
-This returns JSON with `pr`, `reviews`, `unresolved`, and `issueComments` fields.
+This returns YAML with `pr`, `reviews`, `issueComments`, `unresolvedThreads`,
+`resolvedThreads`, and `files` fields.
 
-### Presentation
+### Perspective Detection
 
-1. Show PR number, title, and review statuses
-2. For each unresolved review thread, include: file, line, author, and a one-line summary
-3. For each issue-level comment (`issueComments`), include: author, date, and a one-line summary
-4. Group everything into:
-   - **Actionable** — threads/comments requiring code changes or a response from me
-   - **Informational** — discussions, questions I've already answered, or items waiting on others
-5. Present a concise summary table, then ask which items to address
+Check the `pr.author` field. If the author is `SBarker` or `sam0r040`
+(case-insensitive), use the **author perspective**. Otherwise, use the
+**reviewer perspective**.
+
+### Presentation — Author Perspective
+
+#### 1. Status
+
+PR number, title, and a table of reviewers with their latest review state.
+
+#### 2. Needs My Action
+
+Unresolved threads where the **last comment is not from Sam** — these are
+waiting on a response or code change. For each thread show:
+- File and line
+- Who started the thread and what they asked (one-line summary)
+- Last reply (who said what)
+- Thread length
+
+#### 3. Waiting on Others
+
+Unresolved threads where the **last comment is from Sam** — the ball is in
+someone else's court. Show file, line, and a one-line summary.
+
+#### 4. Issue Comments
+
+Issue-level comments with author, date, and a one-line summary. Flag any
+that appear to need a response.
+
+#### 5. What to Do Next
+
+A short prioritised list of recommended actions.
+
+### Presentation — Reviewer Perspective
+
+#### 1. Status
+
+PR number, title, author, and a table of reviewers with their latest state.
+
+#### 2. Author Responded
+
+Unresolved threads where the **author posted after Sam's last comment** —
+the author has replied or made changes and the thread needs Sam's attention.
+For each thread show:
+- File and line
+- Sam's original comment (one-line summary)
+- Author's latest reply (one-line summary)
+- Thread length
+
+#### 3. No Response Yet
+
+Unresolved threads where the **author has not replied since Sam's last
+comment**. Show file, line, and a one-line summary of Sam's comment.
+
+#### 4. Other Reviewers
+
+Threads started by other reviewers that Sam hasn't participated in — may
+need attention or alignment. Show file, line, reviewer, and one-line summary.
+
+#### 5. Issue Comments
+
+Issue-level comments with author, date, and a one-line summary.
+
+#### 6. What to Do Next
+
+A short prioritised list — e.g. "re-review threads where author responded",
+"check new threads from other reviewers".
 
 ### Rules
 
 - Only show **unresolved** review threads — do not include resolved ones
-- Show **all** issue-level comments — they have no resolved state, so include them all and let me judge
-- Do NOT post replies, resolve threads, or push until I confirm
+- Show **all** issue-level comments — they have no resolved state
+- Do NOT post replies, resolve threads, or push until Sam confirms
 - Output any markdown as raw source in code fences
+- When showing thread content, truncate long comments to key points

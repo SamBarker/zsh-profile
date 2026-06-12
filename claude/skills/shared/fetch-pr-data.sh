@@ -1,29 +1,38 @@
 #!/bin/bash
 #
-# Fetches PR status for the current branch: metadata, reviews, comments,
-# resolved and unresolved threads, and changed files.
-# Designed for reviewing other people's PRs.
+# Fetches comprehensive PR data for the current branch.
+# Shared by pr-review and pr-activity skills.
 #
-# Outputs JSON with: pr, reviews, issueComments, unresolvedThreads,
+# Outputs YAML with: pr, reviews, issueComments, unresolvedThreads,
 # resolvedThreads, and files.
 #
 
 set -euo pipefail
 
 GH=/opt/homebrew/bin/gh
+YQ=/opt/homebrew/bin/yq
 
-# Step 1: Get PR number for current branch
+# Get PR number for current branch
 PR_JSON=$("${GH}" pr view --json number,title,url,state 2>&1) || {
     echo "No PR found for current branch" >&2
     exit 1
 }
 
-PR_NUMBER=$(echo "${PR_JSON}" | sed -n 's/.*"number":\([0-9]*\).*/\1/p')
+PR_STATE=$(echo "${PR_JSON}" | jq -r '.state')
+if [[ "${PR_STATE}" == "MERGED" ]]; then
+    echo "PR #$(echo "${PR_JSON}" | jq -r '.number') ($(echo "${PR_JSON}" | jq -r '.title')) has been merged" >&2
+    exit 0
+elif [[ "${PR_STATE}" == "CLOSED" ]]; then
+    echo "PR #$(echo "${PR_JSON}" | jq -r '.number') ($(echo "${PR_JSON}" | jq -r '.title')) is closed" >&2
+    exit 0
+fi
+
+PR_NUMBER=$(echo "${PR_JSON}" | jq -r '.number')
 OWNER_REPO=$("${GH}" repo view --json nameWithOwner --jq '.nameWithOwner')
 OWNER="${OWNER_REPO%%/*}"
 REPO="${OWNER_REPO##*/}"
 
-# Step 2: Fetch everything in a single GraphQL call
+# Fetch everything in a single GraphQL call, reshape with jq, convert to YAML
 "${GH}" api graphql -f query="
 {
   repository(owner: \"${OWNER}\", name: \"${REPO}\") {
@@ -52,9 +61,11 @@ REPO="${OWNER_REPO##*/}"
       }
       comments(first: 50) {
         nodes {
+          databaseId
           author { login }
           createdAt
           body
+          url
         }
       }
       reviewThreads(first: 100) {
@@ -103,9 +114,11 @@ REPO="${OWNER_REPO##*/}"
     body: (if .body == "" then null else .body end)
   }],
   issueComments: [.data.repository.pullRequest.comments.nodes[] | {
+    id: .databaseId,
     author: .author.login,
     at: .createdAt,
-    body: .body
+    body: .body,
+    url: .url
   }],
   unresolvedThreads: [.data.repository.pullRequest.reviewThreads.nodes[] |
     select(.isResolved == false) | {
@@ -135,4 +148,4 @@ REPO="${OWNER_REPO##*/}"
     additions,
     deletions
   }]
-}'
+}' | "${YQ}" -P

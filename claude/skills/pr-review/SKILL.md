@@ -11,13 +11,13 @@ design philosophy.
 
 ### Data Collection
 
-Run the helper script to fetch all data in a single invocation:
+Run the shared fetch script:
 
 ```bash
-/Users/sbarker/.claude/skills/pr-review/fetch-pr-review.sh
+/Users/sbarker/.claude/skills/shared/fetch-pr-data.sh
 ```
 
-This returns JSON with `pr`, `reviews`, `issueComments`, `unresolvedThreads`,
+This returns YAML with `pr`, `reviews`, `issueComments`, `unresolvedThreads`,
 `resolvedThreads`, and `files` fields.
 
 Also read the changed files:
