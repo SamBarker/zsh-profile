@@ -85,6 +85,9 @@ deserve the closest attention, in priority order. This is the "if I only had
 
 ### Rules
 
+- **This is someone else's PR.** Sam is a reviewer, not the author. Draft
+  review comments when asked, but never offer to edit the code or apply
+  changes — the author makes those changes, not the reviewer.
 - Always run the code diff and read changed files — the philosophy analysis requires it
 - Do NOT post replies, resolve threads, or push until Sam confirms
 - Output any markdown as raw source in code fences
