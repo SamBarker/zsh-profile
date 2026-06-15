@@ -74,6 +74,7 @@ REPO="${OWNER_REPO##*/}"
           comments(first: 20) {
             nodes {
               databaseId
+              url
               author { login }
               createdAt
               body
@@ -125,6 +126,7 @@ REPO="${OWNER_REPO##*/}"
       file: .comments.nodes[0].path,
       line: .comments.nodes[0].line,
       replyToId: .comments.nodes[0].databaseId,
+      url: .comments.nodes[0].url,
       comments: [.comments.nodes[] | {
         author: .author.login,
         at: .createdAt,

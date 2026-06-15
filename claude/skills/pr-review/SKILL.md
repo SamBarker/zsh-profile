@@ -83,6 +83,26 @@ Based on open threads and the philosophy analysis, list 2–4 specific areas tha
 deserve the closest attention, in priority order. This is the "if I only had
 10 minutes" list.
 
+#### 8. Thread Reference Table
+
+After the summary, emit a compact table of all unresolved threads with the
+data needed for follow-up actions. This table must survive compaction.
+
+```
+| # | File:Line | Topic | replyToId | URL |
+```
+
+- `#` — short label (T1, T2, …) for referring to threads in conversation
+- `Topic` — one-line summary (enough to identify the thread, not a full recap)
+- `replyToId` — the `databaseId` needed to post a reply via the GitHub API
+- `URL` — direct link to the thread on GitHub
+
+### After Presentation
+
+Once the summary and reference table are complete, run `/compact` to free
+context for follow-up work. The reference table is deliberately small and
+structured so it survives compaction — the raw YAML data does not need to.
+
 ### Rules
 
 - **This is someone else's PR.** Sam is a reviewer, not the author. Draft

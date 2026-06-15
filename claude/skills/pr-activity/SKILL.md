@@ -54,6 +54,8 @@ that appear to need a response.
 
 A short prioritised list of recommended actions.
 
+(The Thread Reference Table in section 7 below applies to both perspectives.)
+
 ### Presentation — Reviewer Perspective
 
 #### 1. Status
@@ -88,6 +90,26 @@ Issue-level comments with author, date, and a one-line summary.
 
 A short prioritised list — e.g. "re-review threads where author responded",
 "check new threads from other reviewers".
+
+#### 7. Thread Reference Table
+
+After the summary, emit a compact table of all unresolved threads with the
+data needed for follow-up actions. This table must survive compaction.
+
+```
+| # | File:Line | Topic | replyToId | URL |
+```
+
+- `#` — short label (T1, T2, …) for referring to threads in conversation
+- `Topic` — one-line summary (enough to identify the thread, not a full recap)
+- `replyToId` — the `databaseId` needed to post a reply via the GitHub API
+- `URL` — direct link to the thread on GitHub
+
+### After Presentation
+
+Once the summary and reference table are complete, run `/compact` to free
+context for follow-up work. The reference table is deliberately small and
+structured so it survives compaction — the raw YAML data does not need to.
 
 ### Rules
 
