@@ -64,9 +64,12 @@ someone else's court. Show file, line, and a one-line summary.
 Issue-level comments with author, date, and a one-line summary. Flag any
 that appear to need a response.
 
-**5. What to Do Next**
+**5. Where to Look**
 
-A short prioritised list of recommended actions.
+Flag things that evolved without Sam or that may need his attention — e.g.
+"Rob pushed back on the approach in thread T2", "new review from Keith".
+Do not point Sam back at his own comments or pending reviews — he knows
+about those already.
 
 #### Output Format — Reviewer Perspective
 
@@ -98,10 +101,12 @@ need attention or alignment. Show file, line, reviewer, and one-line summary.
 
 Issue-level comments with author, date, and a one-line summary.
 
-**6. What to Do Next**
+**6. Where to Look**
 
-A short prioritised list — e.g. "re-review threads where author responded",
-"check new threads from other reviewers".
+Flag things that evolved without Sam or that may need his attention — e.g.
+"Tom and Keith are debating X (Tom thinks Y, Keith thinks Z)", "author
+responded to 3 threads". Do not point Sam back at his own comments or
+pending reviews — he knows about those already.
 
 #### Thread Reference Table (both perspectives)
 
