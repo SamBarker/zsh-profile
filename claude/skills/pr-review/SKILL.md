@@ -25,7 +25,16 @@ Include these instructions verbatim in the agent prompt:
 
 #### Data Collection
 
-1. Run the shared fetch script:
+1. Read the changed files first — before looking at any thread data:
+
+```bash
+git diff $(git merge-base HEAD origin/main)..HEAD
+```
+
+2. Read `~/.claude/design-philosophy-review-reference.md` for the design
+philosophy prompts.
+
+3. Run the shared fetch script to get PR metadata and thread data:
 
 ```bash
 /Users/sbarker/.claude/skills/shared/fetch-pr-data.sh
@@ -34,14 +43,9 @@ Include these instructions verbatim in the agent prompt:
 This returns YAML with `pr`, `reviews`, `issueComments`, `unresolvedThreads`,
 `resolvedThreads`, and `files` fields.
 
-2. Read the changed files:
-
-```bash
-git diff $(git merge-base HEAD origin/main)..HEAD
-```
-
-3. Read `~/.claude/design-philosophy-review-reference.md` for the design
-philosophy prompts.
+**Important:** Complete the design philosophy analysis (section 6) from the
+diff before reading the thread data. The thread data is for sections 2–5 and
+for cross-referencing in section 7 — it must not anchor the design analysis.
 
 #### Output Format
 
@@ -86,9 +90,14 @@ summary of what was discussed.
 **6. Design Philosophy Analysis**
 
 Use the ten prompts from the design philosophy reference as a lens on the
-changed code. Organise the analysis around what the code reveals, not around
-the prompt list — write a coherent narrative, not a checklist. When multiple
-prompts converge on the same concern, say so.
+changed code. This analysis must be grounded in the diff — what the code
+actually does — not in what other reviewers have said. Do not let existing
+threads anchor or shape the observations here; those are read after the
+analysis is formed.
+
+Organise the analysis around what the code reveals, not around the prompt
+list — write a coherent narrative, not a checklist. When multiple prompts
+converge on the same concern, say so.
 
 For each observation, note which prompt(s) surfaced it so the analysis is
 traceable. The prompts are angles on one idea (preserve independence of
@@ -99,9 +108,22 @@ Close with a one-paragraph overall impression of the design.
 
 **7. Where to Focus**
 
-Based on open threads and the philosophy analysis, list 2–4 specific areas that
-deserve the closest attention, in priority order. This is the "if I only had
-10 minutes" list.
+List 2–4 areas that deserve Sam's attention as a reviewer, prioritising:
+1. Areas with **no existing thread coverage** — fresh territory where Sam's
+   view is the only one
+2. Areas with **active debate or open questions** — where Sam's perspective
+   could add weight or a new angle to a contested point
+
+For each item use this structure:
+
+**Title** — one-line description of the concern from the diff
+What to look at: specific code location or pattern to examine, and why it matters
+Thread context: *(one sentence only — e.g. "T5 raises this, no reply" or "not covered")*
+
+Keep thread context strictly separate from the substance. If an existing thread
+covers part of the concern but Sam sees a distinct angle, describe Sam's angle
+in "What to look at" and note only the overlap in "Thread context" — do not
+blend them.
 
 **8. Thread Reference Table**
 
