@@ -172,7 +172,7 @@ if [ -z "$INTELLIJ_ENVIRONMENT_READER" ]; then
         export LD_LIBRARY_PATH
       fi
 
-      DOCKER_HOST=$(podman machine inspect --format '{{ .ConnectionInfo.PodmanSocket.Path }}')
+      DOCKER_HOST="unix://$(podman machine inspect --format '{{ .ConnectionInfo.PodmanSocket.Path }}')"
       export DOCKER_HOST
     fi
 
@@ -198,7 +198,7 @@ export MY_PROFILE
 export REGISTRY_DESTINATION=quay.io/${QUAY_ORG}/kroxylicious
 
 export CLAUDE_CODE_USE_VERTEX=1
-export CLOUD_ML_REGION=us-east5
+export CLOUD_ML_REGION=global
 export ANTHROPIC_VERTEX_PROJECT_ID=itpc-gcp-cp-pe-eng-claude
 
 if [ -n "${ZSH_DEBUGRC+1}" ]; then

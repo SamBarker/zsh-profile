@@ -21,3 +21,17 @@ updateFork() {
 gnb() {
   updateFork && git checkout -b "$1" "upstream/$(git_main_branch)" && git push -u origin "$1"
   }
+
+_minikubeLoadImage() {
+  local module="$1" tarPath="$2"
+  mci -P dist -DskipTests -pl "${module}" -DskipDocs=true -Dquick -DwithAdditionalFilters=true \
+    && gunzip --to-stdout "${tarPath}" | minikube image load - --alsologtostderr=true 2>&1 | tail -n1
+}
+
+minikubeloadproxy() {
+  _minikubeLoadImage :kroxylicious-app kroxylicious-app/target/kroxylicious-proxy.img.tar.gz
+}
+
+minikubeloadoperator() {
+  _minikubeLoadImage :kroxylicious-operator kroxylicious-operator/target/kroxylicious-operator.img.tar.gz
+}
