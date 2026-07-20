@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# Rebase current branch on upstream/main, verify the build is clean, and push.
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+PURPLE='\033[0;35m'
+NC='\033[0m'
+
+step() { printf "${YELLOW}==> %s${NC}\n" "$*"; }
+ok()   { printf "${GREEN}%s${NC}\n" "$*"; }
+die()  { printf "${RED}%s${NC}\n" "$*" >&2; exit 1; }
+
+main_branch=$(git symbolic-ref refs/remotes/upstream/HEAD 2>/dev/null | sed 's|refs/remotes/upstream/||') \
+  || die "Cannot determine upstream main branch"
+
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+[[ "${current_branch}" == "${main_branch}" ]] && die "On ${main_branch} — checkout a feature branch first"
+
+step "Syncing fork with upstream/${main_branch}"
+git fetch upstream "${main_branch}" || die "Failed to fetch from upstream"
+git fetch origin "${main_branch}"   || die "Failed to fetch from origin"
+git push --force-with-lease origin "upstream/${main_branch}:${main_branch}" \
+  || die "Failed to sync origin/${main_branch}"
+
+step "Rebasing ${current_branch} on upstream/${main_branch}"
+git rebase "upstream/${main_branch}" || die "Rebase failed — resolve conflicts then re-run"
+
+step "Verifying build"
+mvn_log=$(mktemp -t push4merge.XXXXXX)
+if ! mvn verify -DskipTests > "${mvn_log}" 2>&1; then
+  awk '/BUILD FAILURE/{found=1} found' "${mvn_log}"
+  printf "${PURPLE}mvn log: %s${NC}\n" "${mvn_log}"
+  die "Build failed"
+fi
+rm -f "${mvn_log}"
+
+step "Checking for uncommitted changes"
+git diff --quiet || die "Local changes found — commit before pushing"
+
+step "Pushing ${current_branch}"
+git push --force-with-lease || die "Push failed"
+
+ok "${current_branch} pushed and ready for merge"
