@@ -28,7 +28,7 @@ git rebase "upstream/${main_branch}" || die "Rebase failed — resolve conflicts
 
 step "Verifying build"
 mvn_log=$(mktemp -t push4merge.XXXXXX)
-if ! mvn verify -DskipTests > "${mvn_log}" 2>&1; then
+if ! mvn clean verify -DskipTests > "${mvn_log}" 2>&1; then
   awk '/BUILD FAILURE/{found=1} found' "${mvn_log}"
   printf "${PURPLE}mvn log: %s${NC}\n" "${mvn_log}"
   die "Build failed"
