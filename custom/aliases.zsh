@@ -11,10 +11,17 @@ updateFork() {
   git fetch upstream "${main_branch}"
   if [[ $(git_current_branch) == "${main_branch}" ]]; then
     git rebase "upstream/${main_branch}"
+  else
+    local worktree_path
+    worktree_path=$(git worktree list --porcelain \
+      | awk '/^worktree /{wt=$2} /^branch refs\/heads\/'"${main_branch}"'/{print wt}')
+    if [[ -n "${worktree_path}" ]]; then
+      git -C "${worktree_path}" merge --ff-only "upstream/${main_branch}"
+    else
+      git branch -f "${main_branch}" "upstream/${main_branch}"
+    fi
   fi
   git fetch origin "${main_branch}"
-  # Push the upstream tracking ref directly — avoids touching the local branch pointer,
-  # which would fail if main is checked out in a worktree.
   git push --force-with-lease origin "upstream/${main_branch}:${main_branch}"
 }
 
