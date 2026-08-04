@@ -144,6 +144,42 @@ follow-up actions:
 Relay the agent's full output to Sam. Do not summarise or truncate it — the
 agent has already produced the right level of detail.
 
+### Posting Comments
+
+When Sam asks to post comments, save them to `.scratch/review-comments-<pr-number>.json`
+and use the shared post script:
+
+```bash
+PATH="/opt/homebrew/bin:$PATH" python3 /Users/sbarker/.claude/skills/shared/post-review-comments.py .scratch/review-comments-<pr-number>.json <owner/repo> <pr-number>
+```
+
+The comments file is a JSON array. Each entry has:
+
+```json
+{
+  "type": "inline_comment | review | issue_comment | review_thread_reply",
+  "thread": "T1",
+  "file": "path/to/File.java",
+  "line": 42,
+  "body": "Comment text",
+  "replyToId": 1234567,
+  "event": "APPROVE | REQUEST_CHANGES | COMMENT",
+  "status": "pending | posted"
+}
+```
+
+- `type: inline_comment` — new inline comment on a specific file/line; requires `file` and `line`
+- `type: review` — submits a standalone review with `event` (APPROVE, REQUEST_CHANGES, or COMMENT)
+- `type: review_thread_reply` — replies to an existing thread; requires `replyToId`
+- `type: issue_comment` — posts a top-level PR comment
+- Entries with `status: posted` are skipped automatically
+- After posting, the script updates `status` to `posted` in the file
+
+**Note:** inline comments are posted as a COMMENT review. To approve, add a separate
+`type: review` entry with `event: APPROVE`.
+
+If the file doesn't exist yet, create it as an empty array `[]` before drafting comments into it.
+
 ### Rules
 
 - **This is someone else's PR.** Sam is a reviewer, not the author. Draft

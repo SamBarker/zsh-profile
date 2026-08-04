@@ -126,6 +126,36 @@ Always end with a compact table of **all** unresolved threads:
 Relay the agent's full output to Sam. Do not summarise or truncate it — the
 agent has already produced the right level of detail.
 
+### Posting Replies
+
+When Sam asks to post replies, use the shared post script:
+
+```bash
+PATH="/opt/homebrew/bin:$PATH" python3 /Users/sbarker/.claude/skills/shared/post-review-comments.py <comments-file> <owner/repo> <pr-number>
+```
+
+The comments file is a JSON array. Each entry has:
+
+```json
+{
+  "type": "review_thread_reply | issue_comment | review",
+  "thread": "T1",
+  "replyToId": 1234567,
+  "body": "Reply text",
+  "event": "APPROVE | REQUEST_CHANGES | COMMENT",
+  "status": "pending | posted"
+}
+```
+
+- `type: review_thread_reply` — posts a reply to an inline review thread; requires `replyToId`
+- `type: issue_comment` — posts a top-level PR comment (issue-level)
+- `type: review` — submits a review with `event` (APPROVE, REQUEST_CHANGES, or COMMENT)
+- Entries with `status: posted` are skipped automatically
+- After posting, the script updates `status` to `posted` in the file
+
+The comments file lives at `proposals/<pr-number>-review-comments.json` in the design repo.
+If it doesn't exist yet, create it as an empty array `[]` before drafting replies into it.
+
 ### Rules
 
 - Only show **unresolved** review threads — do not include resolved ones
