@@ -204,3 +204,4 @@ export ANTHROPIC_VERTEX_PROJECT_ID=itpc-gcp-cp-pe-eng-claude
 if [ -n "${ZSH_DEBUGRC+1}" ]; then
     zprof
 fi
+[ -f "/Users/sbarker/.config/claude-code-vertex/env.sh" ] && . "/Users/sbarker/.config/claude-code-vertex/env.sh"
