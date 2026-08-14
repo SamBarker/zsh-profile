@@ -1,7 +1,6 @@
 # comments are supported like this
 #Run `source /usr/local/opt/antidote/share/antidote/antidote.zsh && antidote bundle <${MY_PROFILE}/zsh_plugins.txt >${MY_PROFILE}/zsh_plugins_$(uname).zsh` when changing this file
 
-caarlos0/jvm
 djui/alias-tips
 
 caarlos0/zsh-mkc
