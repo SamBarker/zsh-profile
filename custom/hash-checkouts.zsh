@@ -1,63 +1,55 @@
-# shellcheck disable=SC2034
-typeset -a projects
-
 OS=$(uname)
-_search_paths=("${HOME}/src" "${HOME}/src/strimzi" "${HOME}/src/kroxy" "${HOME}/src/kroxylicious" "${HOME}/src/flink")
+
+# Root under which all my git checkouts live. Repos may sit directly under it
+# or be nested one/two levels down inside grouping folders (strimzi, kroxy, …).
+_search_root="${HOME}/src"
+
+# How deep to search. Repos nested inside grouping folders live at depth 2+.
+# Override for a one-off deeper/shallower scan: HASH_CHECKOUTS_DEPTH=4 hashCheckouts
+_hash_checkouts_depth="${HASH_CHECKOUTS_DEPTH:-3}"
 
 _findCommand() {
+  # GNU find is required for -printf. On macOS that's gfind (brew coreutils/findutils).
   if [ "$OS" = 'Darwin' ]; then
-    # for MacOS
-    echo "$(command -v gfind)"
+    command -v gfind
   else
-    # for Linux and Windows
-    echo "$(command -v find)"
+    command -v find
   fi
 }
 
-_hasKey() {
-  local source_array
-  local target="${1}"
-  source_array=${(P)2}
-  if [[ ${source_array[(ie)${target}]} -le ${#source_array} ]]; then
-    return 0
-  fi
-  return 1
-}
-
-_buildHash() {
-  local projects_dir=$1
-  local proj=$2
-  if git -C "${projects_dir}/${proj}" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-      hash -d "${proj}=${projects_dir}/${proj}"
-  fi
-}
-
-_findCheckouts() {
-  local fnd search_dir=$1
-  fnd="$(_findCommand)"
-  if [ -d "${search_dir}" ]; then
-    ${fnd} "${search_dir}" -maxdepth 1 -mindepth 1 -type d -printf "%f\n"  \
-    | while IFS='' read -r file; do \
-      _hasKey "$file" "projects" || _buildHash "${search_dir}" "${file}" ; done
-  fi
-}
-
-#Include all git projects in the directory hash table
-#Which with AUTO_CD allows jumping to a checkout just by the repo name
+# Register every git checkout under $_search_root in the directory hash table
+# (repo-name -> path). With AUTO_CD this lets you `cd` to a repo by its bare
+# name from anywhere. Safe to re-run any time — e.g. after cloning a new repo,
+# just type `hashCheckouts` to pick it up in the current session.
 hashCheckouts() {
-  cache=${XDG_CACHE_HOME:-$HOME/.cache}/.zsh-hashes
-  if [ -f "${cache}" ]; then
-    while IFS="" read -r p || [ -n "$p" ]; do
-      hash -d "$p"
-      projects+=("$p")
-    done <"${cache}"
-  fi
-  for p in "${_search_paths[@]}"; do
-    if [[ -r "${p}" ]]; then
-      _findCheckouts "${p}"
-    fi
-  done
+  local find_cmd
+  find_cmd="$(_findCommand)"
 
-  #Replace the cache with any updates we have added
-  hash -d >"${cache}"
+  [ -d "${_search_root}" ] || return 0
+
+  # Locate every .git entry and take its parent dir (%h) as the repo root.
+  # -prune stops find descending into .git itself. This also matches git
+  # worktrees, where .git is a file rather than a directory.
+  local find_output
+  find_output="$(
+    "${find_cmd}" "${_search_root}" \
+      -maxdepth "${_hash_checkouts_depth}" \
+      -name .git -prune -printf '%h\n' 2>/dev/null
+  )"
+
+  # Split the newline-separated output into an array. The (f) flag splits on
+  # newlines; @ inside double quotes keeps each line a separate element even
+  # if a path contains spaces.
+  local -a repo_paths
+  repo_paths=( "${(@f)find_output}" )
+
+  # Drop any duplicate paths (u = unique).
+  repo_paths=( "${(@u)repo_paths}" )
+
+  local repo_path repo_name
+  for repo_path in "${repo_paths[@]}"; do
+    [ -n "${repo_path}" ] || continue   # skip the empty element when nothing matched
+    repo_name="${repo_path:t}"          # :t = tail, i.e. the basename
+    hash -d -- "${repo_name}=${repo_path}"
+  done
 }
