@@ -5,7 +5,7 @@ alias gls='gls --hyperlink=auto --color=tty'
 alias mci='mvn clean install'
 alias mcb='mvn clean install -Dqucik'
 
-_git_has_upstream() {
+__git_has_upstream() {
   git remote get-url upstream &>/dev/null
 }
 
@@ -29,7 +29,7 @@ updateFork() {
   git push --force-with-lease origin "upstream/${main_branch}:${main_branch}"
 }
 
-_syncOrigin() {
+__syncOrigin() {
   local main_branch
   main_branch=$(git_main_branch)
   git fetch origin "${main_branch}"
@@ -50,24 +50,24 @@ _syncOrigin() {
 gnb() {
   local main_branch
   main_branch=$(git_main_branch)
-  if _git_has_upstream; then
+  if __git_has_upstream; then
     updateFork && git checkout -b "$1" "upstream/${main_branch}"
   else
-    _syncOrigin && git checkout -b "$1" "origin/${main_branch}"
+    __syncOrigin && git checkout -b "$1" "origin/${main_branch}"
   fi \
     && git push -u origin "$1"
 }
 
-_minikubeLoadImage() {
+__minikubeLoadImage() {
   local module="$1" tarPath="$2"
   mci -P dist -DskipTests -pl "${module}" -DskipDocs=true -Dquick -DwithAdditionalFilters=true \
     && gunzip --to-stdout "${tarPath}" | minikube image load - --alsologtostderr=true 2>&1 | tail -n1
 }
 
 minikubeloadproxy() {
-  _minikubeLoadImage :kroxylicious-app kroxylicious-app/target/kroxylicious-proxy.img.tar.gz
+  __minikubeLoadImage :kroxylicious-app kroxylicious-app/target/kroxylicious-proxy.img.tar.gz
 }
 
 minikubeloadoperator() {
-  _minikubeLoadImage :kroxylicious-operator kroxylicious-kubernetes/kroxylicious-operator/target/kroxylicious-operator.img.tar.gz
+  __minikubeLoadImage :kroxylicious-operator kroxylicious-kubernetes/kroxylicious-operator/target/kroxylicious-operator.img.tar.gz
 }
