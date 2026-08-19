@@ -11,30 +11,28 @@ design philosophy.
 
 ### How This Skill Works
 
-Spawn a **single Agent** to do all data collection and analysis. The agent
-processes the raw PR data in its own context — the main conversation only
-receives the finished summary. This keeps the main context clean for
-follow-up discussion.
+Use a **two-agent hybrid approach** to optimize cost while maintaining quality:
 
-The agent prompt must include all the instructions below so it knows what
-to fetch, how to analyse, and what to return.
+1. **Haiku agent** (`model: "haiku"`): Fetch and parse all PR data, produce
+   sections 1-5 and 8 (structured overview of threads and reviews)
+   
+2. **Sonnet agent** (default model): Read the diff and design philosophy
+   reference, produce sections 6-7 (design analysis and "Where to Focus"),
+   referencing the Haiku output for thread context
 
-### Agent Instructions
+Run the agents **sequentially** — the Sonnet agent needs the Haiku output
+to cross-reference threads in section 7.
 
-Include these instructions verbatim in the agent prompt:
+The main conversation only receives the combined output from both agents,
+keeping context clean for follow-up discussion.
+
+### Haiku Agent Instructions
+
+Include these instructions verbatim in the Haiku agent prompt:
 
 #### Data Collection
 
-1. Read the changed files first — before looking at any thread data:
-
-```bash
-git diff $(git merge-base HEAD origin/main)..HEAD
-```
-
-2. Read `~/.claude/design-philosophy-review-reference.md` for the design
-philosophy prompts.
-
-3. Run the shared fetch script to get PR metadata and thread data:
+Run the shared fetch script to get PR metadata and thread data:
 
 ```bash
 /Users/sbarker/.claude/skills/shared/fetch-pr-data.sh
@@ -43,14 +41,10 @@ philosophy prompts.
 This returns YAML with `pr`, `reviews`, `issueComments`, `unresolvedThreads`,
 `resolvedThreads`, and `files` fields.
 
-**Important:** Complete the design philosophy analysis (section 6) from the
-diff before reading the thread data. The thread data is for sections 2–5 and
-for cross-referencing in section 7 — it must not anchor the design analysis.
+#### Output Format (Haiku Agent)
 
-#### Output Format
-
-The agent must return **all** of the following sections. This is what
-gets relayed to the main conversation.
+The Haiku agent must return sections 1-5 and 8 only. The Sonnet agent will
+produce sections 6-7.
 
 **1. PR Overview**
 
@@ -86,6 +80,46 @@ Show issue-level comments (not on specific lines) with author and timestamp.
 
 Show resolved threads, most recent first. Include file, line, and a one-line
 summary of what was discussed.
+
+**8. Thread Reference Table**
+
+A compact table of **all** unresolved threads with the data needed for
+follow-up actions:
+
+```
+| # | File:Line | Topic | replyToId | URL |
+```
+
+- `#` — short label (T1, T2, …) for referring to threads in conversation
+- `Topic` — one-line summary (enough to identify the thread, not a full recap)
+- `replyToId` — the `databaseId` needed to post a reply via the GitHub API
+- `URL` — direct link to the thread on GitHub
+
+### Sonnet Agent Instructions
+
+Include these instructions verbatim in the Sonnet agent prompt:
+
+#### Data Collection
+
+1. Read the changed files:
+
+```bash
+git diff $(git merge-base HEAD origin/main)..HEAD
+```
+
+2. Read `~/.claude/design-philosophy-review-reference.md` for the design
+philosophy prompts.
+
+3. You will receive the output from the Haiku agent which includes all PR
+metadata, thread data, and the thread reference table. Use this for
+cross-referencing in section 7, but **do not let existing threads anchor
+the design analysis in section 6** — that must be grounded in what the
+code actually does.
+
+#### Output Format (Sonnet Agent)
+
+The Sonnet agent must return sections 6-7 only. These will be combined with
+the Haiku output.
 
 **6. Design Philosophy Analysis**
 
@@ -125,24 +159,14 @@ covers part of the concern but Sam sees a distinct angle, describe Sam's angle
 in "What to look at" and note only the overlap in "Thread context" — do not
 blend them.
 
-**8. Thread Reference Table**
+Use the thread labels (T1, T2, etc.) from the Haiku agent's thread reference
+table when cross-referencing.
 
-A compact table of **all** unresolved threads with the data needed for
-follow-up actions:
+### After Both Agents Return
 
-```
-| # | File:Line | Topic | replyToId | URL |
-```
-
-- `#` — short label (T1, T2, …) for referring to threads in conversation
-- `Topic` — one-line summary (enough to identify the thread, not a full recap)
-- `replyToId` — the `databaseId` needed to post a reply via the GitHub API
-- `URL` — direct link to the thread on GitHub
-
-### After the Agent Returns
-
-Relay the agent's full output to Sam. Do not summarise or truncate it — the
-agent has already produced the right level of detail.
+Combine the outputs in order (Haiku sections 1-5, 8, then Sonnet sections 6-7)
+and relay the full result to Sam. Do not summarise or truncate — the agents
+have already produced the right level of detail.
 
 ### Posting Comments
 

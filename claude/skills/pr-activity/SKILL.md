@@ -10,10 +10,14 @@ detects whether Sam is the author or a reviewer and adjusts focus accordingly.
 
 ### How This Skill Works
 
-Spawn a **single Agent** to do all data collection and analysis. The agent
+Spawn a **single Haiku agent** to do all data collection and analysis. The agent
 processes the raw PR data in its own context — the main conversation only
 receives the finished summary. This keeps the main context clean for
 follow-up discussion.
+
+Use `model: "haiku"` when spawning the agent. Haiku is sufficient for this
+task: it's fetching structured data, applying rule-based grouping (who posted
+last, who participated), and formatting output. No deep reasoning required.
 
 The agent prompt must include all the instructions below so it knows what
 to fetch, how to analyse, and what to return.
