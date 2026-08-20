@@ -1,5 +1,10 @@
 {
-  "model": "claude-sonnet-4-6",
+  "env": {
+    "CLAUDE_CODE_USE_VERTEX": "1",
+    "ANTHROPIC_VERTEX_PROJECT_ID": "itpc-ca-8588942395",
+    "CLOUD_ML_REGION": "global"
+  },
+  "model": "claude-sonnet-5",
   "hooks": {
     "SessionEnd": [
       {
@@ -11,5 +16,6 @@
         ]
       }
     ]
-  }
+  },
+  "effortLevel": "high"
 }
