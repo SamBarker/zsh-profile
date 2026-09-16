@@ -99,24 +99,24 @@ for org in "${ORGS[@]}"; do
         > "${OUTDIR}/prs-reviewed-${org}.md"
 
     echo "[$org] Fetching items commented on..."
-    page=1 all_events="[]"
+    page=1
+    tmp_events=$(mktemp)
     while :; do
         page_json=$($GH api "/users/${USER}/events/orgs/${org}?per_page=100&page=${page}" 2>/dev/null) || break
-        [[ $(print -r -- "$page_json" | jq 'length') -eq 0 ]] && break
-        all_events+=$'\n'"$page_json"
-        print -r -- "$page_json" | jq -e --arg since "${SINCE}T00:00:00Z" \
+        [[ $(printf '%s' "$page_json" | jq 'length') -eq 0 ]] && break
+        printf '%s\n' "$page_json" >> "$tmp_events"
+        printf '%s' "$page_json" | jq -e --arg since "${SINCE}T00:00:00Z" \
             '.[-1].created_at < $since' >/dev/null 2>&1 && break
         ((page++))
         [[ $page -gt 10 ]] && break
     done
-    print -r -- "$all_events" | jq -s -r --arg since "${SINCE}T00:00:00Z" --arg until "${UNTIL}T23:59:59Z" --arg user "${USER}" '
+    jq -s -r --arg since "${SINCE}T00:00:00Z" --arg until "${UNTIL}T23:59:59Z" '
       (add // [])
       | [.[]
          | select(.created_at >= $since)
          | select(.created_at <= $until)
          | select(.type == "IssueCommentEvent")
          | select(.payload.action == "created")
-         | select(.payload.issue.user.login != $user)
          | {
              title: .payload.issue.title,
              url:   .payload.issue.html_url,
@@ -128,7 +128,8 @@ for org in "${ORGS[@]}"; do
       | (.[0]) as $item
       | ([.[] | .date] | max) as $last
       | "- \($item.kind) \($item.title) \($item.url) — commented \($last)"' \
-        > "${OUTDIR}/commented-on-${org}.md"
+        "$tmp_events" > "${OUTDIR}/commented-on-${org}.md"
+    rm -f "$tmp_events"
 done
 
 echo "Done. Files written:"
