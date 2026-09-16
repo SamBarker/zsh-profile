@@ -117,6 +117,7 @@ for org in "${ORGS[@]}"; do
          | select(.created_at <= $until)
          | select(.type == "IssueCommentEvent")
          | select(.payload.action == "created")
+         | select(.payload.comment.body | contains("<!-- sqra-placement-anchor -->") | not)
          | {
              title: .payload.issue.title,
              url:   .payload.issue.html_url,
