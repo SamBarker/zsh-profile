@@ -46,9 +46,17 @@ _llm_pipe_omlx() {
     local stdin_text
     stdin_text=$(cat)
 
+    # Resolve API key: env var takes precedence, otherwise read from ~/.omlx/settings.json
+    local api_key="${OMLX_API_KEY:-}"
+    if [[ -z "$api_key" ]]; then
+        api_key=$(jq -r '.auth.api_key // empty' ~/.omlx/settings.json 2>/dev/null) || true
+    fi
+    local auth_header=()
+    [[ -n "$api_key" ]] && auth_header=(-H "Authorization: Bearer ${api_key}")
+
     # Resolve model: use explicit arg, env var, or query the server for the first available
     if [[ -z "$model" ]]; then
-        model=$(curl -sf "${base_url}/v1/models" \
+        model=$(curl -sf "${auth_header[@]}" "${base_url}/v1/models" \
             | jq -r '.data[0].id // empty' 2>/dev/null) || true
     fi
     if [[ -z "$model" ]]; then
@@ -71,7 +79,7 @@ _llm_pipe_omlx() {
             stream: false
         }')
 
-    curl -sf "${base_url}/v1/chat/completions" \
+    curl -sf "${auth_header[@]}" "${base_url}/v1/chat/completions" \
         -H "Content-Type: application/json" \
         -d "$payload" \
         | jq -r '.choices[0].message.content'
