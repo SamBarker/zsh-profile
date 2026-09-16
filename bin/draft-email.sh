@@ -2,7 +2,10 @@
 # Interactively reviews per-org contribution summaries and drafts a single email.
 #
 # Usage:
-#   draft-email.sh [DIRECTORY]
+#   draft-email.sh [--llm BACKEND] [--model MODEL] [DIRECTORY]
+#
+# LLM backends: claude (default), bob, omlx
+# See bin/llm-pipe.sh for backend details and environment variables.
 #
 # Defaults:
 #   DIRECTORY  ~/contributions/YYYY-MM-DD (today's date)
@@ -11,7 +14,22 @@
 
 set -euo pipefail
 
-INDIR="${1:-${HOME}/contributions/$(date +%Y-%m-%d)}"
+SCRIPT_DIR="${0:A:h}"
+# shellcheck source=bin/llm-pipe.sh
+source "${SCRIPT_DIR}/llm-pipe.sh"
+
+LLM_FLAGS=()
+INDIR=""
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --llm)   LLM_FLAGS+=(--llm   "$2"); shift 2 ;;
+        --model) LLM_FLAGS+=(--model "$2"); shift 2 ;;
+        *)       INDIR="$1"; shift ;;
+    esac
+done
+
+INDIR="${INDIR:-${HOME}/contributions/$(date +%Y-%m-%d)}"
 
 if [[ ! -d "$INDIR" ]]; then
     echo "Directory not found: $INDIR" >&2
@@ -76,7 +94,7 @@ fi
 echo ""
 echo "Drafting email..."
 
-echo "$content" | claude -p "These are my weekly contribution summaries for the week ending ${WEEK_END}, one per org. ${heading_instruction} Where corrections are provided, incorporate them using my exact wording. Write a short & consise weekly email in the style of a plain personal update — prose, direct and understated, technical but not jargon-heavy, honest about blockers. No corporate language, no filler phrases, no exclamation marks. First person as if I wrote it myself. Preserve all GitHub URLs from the summaries as markdown links." \
+echo "$content" | llm_prompt "${LLM_FLAGS[@]}" "These are my weekly contribution summaries for the week ending ${WEEK_END}, one per org. ${heading_instruction} Where corrections are provided, incorporate them using my exact wording. Write a short & consise weekly email in the style of a plain personal update — prose, direct and understated, technical but not jargon-heavy, honest about blockers. No corporate language, no filler phrases, no exclamation marks. First person as if I wrote it myself. Preserve all GitHub URLs from the summaries as markdown links." \
     > "${INDIR}/email-draft.md"
 
 echo ""
