@@ -56,10 +56,11 @@ _llm_pipe_omlx() {
         return 1
     fi
 
+    # Prepend /no_think to suppress Qwen3 chain-of-thought blocks in the output
     local payload
     payload=$(jq -n \
         --arg model "$model" \
-        --arg system "$prompt" \
+        --arg system "/no_think ${prompt}" \
         --arg user "$stdin_text" \
         '{
             model: $model,
