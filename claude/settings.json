@@ -1,11 +1,22 @@
 {
   "env": {
-    "CLAUDE_CODE_USE_VERTEX": "1",
     "ANTHROPIC_VERTEX_PROJECT_ID": "itpc-ca-8588942395",
+    "CLAUDE_CODE_USE_VERTEX": "1",
     "CLOUD_ML_REGION": "global"
   },
   "model": "claude-sonnet-5",
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/Users/sbarker/go/bin/chop\" hook"
+          }
+        ]
+      }
+    ],
     "SessionEnd": [
       {
         "hooks": [
@@ -17,5 +28,8 @@
       }
     ]
   },
-  "effortLevel": "high"
+  "effortLevel": "high",
+  "autoCompactWindow": 400000,
+  "autoCompactEnabled": true,
+  "tui": "fullscreen"
 }
