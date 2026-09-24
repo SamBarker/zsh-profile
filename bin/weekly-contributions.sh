@@ -110,14 +110,14 @@ for org in "${ORGS[@]}"; do
         ((page++))
         [[ $page -gt 10 ]] && break
     done
-    jq -s -r --arg since "${SINCE}T00:00:00Z" --arg until "${UNTIL}T23:59:59Z" '
+    jq -s -r --arg since "${SINCE}T00:00:00Z" --arg until "${UNTIL}T23:59:59Z" --arg user "$USER" '
       (add // [])
       | [.[]
          | select(.created_at >= $since)
          | select(.created_at <= $until)
          | select(.type == "IssueCommentEvent")
          | select(.payload.action == "created")
-         | select(.payload.comment.body | contains("<!-- sqra-placement-anchor -->") | not)
+         | select(.payload.comment.user.login == $user)
          | {
              title: .payload.issue.title,
              url:   .payload.issue.html_url,
